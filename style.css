@@ -1,46 +1,392 @@
+/* =========================================================
+   BARYULAND — STYLE
+   Aesthetic: pastel cute-core + Windows-95 chunkiness + pixel art
+   Design rules followed:
+   - NO gradients, NO glassmorphism, NO minimalism
+   - chunky hard borders, soft pastel fills
+   - pixel fonts, blocky shadows (offset, not blurry)
+   ========================================================= */
+
+/* ---------- PASTEL COLOUR PALETTE (easy to tweak) ---------- */
+:root {
+  --cream:      #fdf6ec;   /* main background */
+  --pink:       #f7c6d9;   /* primary pastel pink */
+  --pink-deep:  #e89db4;   /* darker pink for borders/accents */
+  --blue:       #c5dff8;   /* soft sky blue */
+  --blue-deep:  #8fb8e0;
+  --mint:       #c9efd6;   /* mint green */
+  --lilac:      #ddcdf0;
+  --butter:     #fdeeb5;   /* warm yellow for notes */
+  --ink:        #5a4a55;   /* soft dark text (not pure black) */
+  --shadow:     #b89aa8;   /* offset block shadow colour */
+
+  --border-w: 4px;         /* chunky border width */
+}
+
+/* ---------- GLOBAL RESET-ish ---------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* image-rendering keeps pixel art crisp instead of blurry */
+img {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: block;
+}
+
 body {
-    margin: 0;
-    font-family: monospace;
-    background: #c1a68b;
-    color: #654320;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--ink);
+  background: var(--cream);
+  /* subtle dotted "graph paper" feel — flat, no gradient */
+  background-image: radial-gradient(var(--pink) 1px, transparent 1px);
+  background-size: 22px 22px;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* title area */
-.title {
-    text-align: center;
-    padding: 20px;
+/* Headings use the blocky pixel font */
+h1, h2, h3, .pixel {
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 1px;
+  line-height: 1.6;
 }
 
-/* map background */
+/* ===========================================================
+   TOP BAR
+   =========================================================== */
+.topbar {
+  background: var(--pink);
+  border-bottom: var(--border-w) solid var(--pink-deep);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.topbar__title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  color: var(--ink);
+  text-shadow: 2px 2px 0 #fff;
+}
+.topbar__hint {
+  font-size: 20px;
+  color: var(--ink);
+  opacity: .8;
+}
+
+/* ===========================================================
+   THE MAP
+   =========================================================== */
 .map {
-    position: relative;
-    width: 100vw;
-    height: 85vh;
-    background: #9cb8c6;
-    overflow: hidden;
+  position: relative;
+  width: 100%;
+  /* fixed-ish height so buildings position predictably */
+  height: calc(100vh - 60px);
+  min-height: 520px;
+  overflow: hidden;
+
+  /* >>> INSERT YOUR TOWN MAP IMAGE HERE <<<
+     uncomment & point to your file: */
+  /* background: url('images/town-map.png') center/cover no-repeat; */
+
+  /* placeholder flat pastel "grass" so it isn't empty before you add art */
+  background-color: var(--mint);
 }
 
-/* clickable spots */
-.spot {
-    position: absolute;
-    background: #a9784d;
-    color: #fff;
-    padding: 10px 14px;
-    border-radius: 12px;
-    text-decoration: none;
-    border: 2px solid #654320;
-    transition: transform 0.15s, background 0.15s;
+/* ---------- Buildings = clickable hotspots ---------- */
+.building {
+  position: absolute;
+  transform: translate(-50%, -50%); /* so top/left = centre of building */
+
+  /* chunky pastel card */
+  background: var(--cream);
+  border: var(--border-w) solid var(--ink);
+  /* hard offset shadow — blocky, NOT blurry */
+  box-shadow: 6px 6px 0 var(--shadow);
+
+  padding: 18px 22px;
+  /* generous spacing & big hit area so it's easy to click */
+  min-width: 130px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  cursor: pointer;
+  font-family: 'VT323', monospace;
+  color: var(--ink);
+
+  /* gentle idle float so the town feels ALIVE (not flashing dots) */
+  animation: bob 3.5s ease-in-out infinite;
 }
 
-.spot:hover {
-    transform: scale(1.1);
-    background: #ca848e;
+/* stagger each building's float so they don't move in unison */
+.building:nth-child(2) { animation-delay: .4s; }
+.building:nth-child(3) { animation-delay: .8s; }
+.building:nth-child(4) { animation-delay: 1.2s; }
+.building:nth-child(5) { animation-delay: 1.6s; }
+.building:nth-child(6) { animation-delay: 2s; }
+
+.building__emoji { font-size: 42px; line-height: 1; }
+.building__name  {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
 }
 
-/* positions */
-.apartment { top: 60%; left: 20%; }
-.library    { top: 35%; left: 55%; }
-.beach      { top: 75%; left: 80%; }
-.park       { top: 50%; left: 40%; }
-.arcade     { top: 20%; left: 25%; }
-.cinema     { top: 25%; left: 75%; }
+/* hover = pop up + shadow grows (cute, responsive, not annoying) */
+.building:hover {
+  transform: translate(-50%, -55%) scale(1.06);
+  box-shadow: 8px 10px 0 var(--shadow);
+  background: var(--butter);
+  animation-play-state: paused; /* stop bobbing while focused */
+  z-index: 5;
+}
+.building:active {
+  transform: translate(-50%, -50%) scale(0.98);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+
+/* gentle bobbing keyframe */
+@keyframes bob {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50%      { transform: translate(-50%, -56%); }
+}
+
+/* ---------- secret wandering cat easter egg ---------- */
+.secret-cat {
+  position: absolute;
+  top: 40%; left: 45%;
+  font-size: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform .3s ease;
+  z-index: 3;
+}
+.secret-cat:hover { transform: scale(1.4) rotate(-8deg); }
+
+/* ===========================================================
+   SCENE WINDOW (the 95-style window)
+   =========================================================== */
+.scene {
+  position: fixed;
+  inset: 0;
+  background: rgba(90, 74, 85, 0.45); /* soft dim, no blur/glass */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.hidden { display: none !important; }
+
+.window {
+  width: min(900px, 96vw);
+  height: min(640px, 92vh);
+  background: var(--cream);
+  border: var(--border-w) solid var(--ink);
+  box-shadow: 10px 10px 0 var(--shadow);
+  display: flex;
+  flex-direction: column;
+  /* tiny pop-in animation when opening */
+  animation: popIn .25s ease-out;
+}
+@keyframes popIn {
+  from { transform: scale(.92); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* title bar */
+.window__bar {
+  background: var(--blue);
+  border-bottom: var(--border-w) solid var(--ink);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.window__title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+}
+.window__buttons { display: flex; gap: 8px; }
+
+/* chunky window buttons */
+.winbtn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  background: var(--cream);
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--shadow);
+  padding: 6px 9px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.winbtn:hover  { background: var(--butter); }
+.winbtn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--shadow); }
+.winbtn--close:hover { background: var(--pink-deep); color: #fff; }
+
+/* the scene content area */
+.window__body {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+  position: relative;
+}
+
+/* ===========================================================
+   SCENE CONTENTS — backgrounds + glowing objects + menus
+   =========================================================== */
+
+/* the black scene canvas where YOUR image goes */
+.scene-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+  background: #1a1420;       /* black-ish stage as you asked */
+  border: 3px solid var(--ink);
+  overflow: hidden;
+}
+
+/* If you add a background image to a scene, give the stage this style inline:
+   style="background-image:url('images/library.png')" */
+.scene-stage--img {
+  background-size: cover;
+  background-position: center;
+}
+
+/* glowing clickable object inside a scene */
+.glow-object {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 38px;
+  /* soft pastel glow — steady, NOT flashing */
+  filter: drop-shadow(0 0 6px var(--butter)) drop-shadow(0 0 12px var(--pink));
+  transition: transform .2s ease, filter .2s ease;
+  animation: glowPulse 2.6s ease-in-out infinite; /* gentle breathe, not blink */
+}
+.glow-object:hover {
+  transform: translate(-50%, -50%) scale(1.25);
+  filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 18px var(--pink));
+}
+/* soft breathing glow (subtle, inviting — not a flashing dot) */
+@keyframes glowPulse {
+  0%, 100% { opacity: .85; }
+  50%      { opacity: 1;   }
+}
+
+/* a label that appears under glow objects */
+.glow-object .glow-label {
+  position: absolute;
+  top: 110%; left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  padding: 2px 8px;
+  opacity: 0;
+  transition: opacity .2s;
+  pointer-events: none;
+}
+.glow-object:hover .glow-label { opacity: 1; }
+
+/* ---------- a vertical menu list (for "browse shelves" etc.) ---------- */
+.scene-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;          /* spaced apart so easy to click */
+  max-width: 460px;
+  margin: 0 auto;
+}
+.scene-menu h3 {
+  font-size: 13px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.menu-item {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  text-align: left;
+  background: var(--cream);
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--shadow);
+  padding: 12px 16px;
+  cursor: pointer;
+  color: var(--ink);
+  transition: background .15s, transform .1s;
+}
+.menu-item:hover  { background: var(--pink); transform: translateX(4px); }
+.menu-item:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--shadow); }
+
+/* tiny caption / instruction text */
+.scene-caption {
+  text-align: center;
+  font-size: 20px;
+  margin: 10px 0;
+  opacity: .85;
+}
+
+/* ===========================================================
+   POPUP — sticky-note styled message
+   =========================================================== */
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(90,74,85,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 80;
+  padding: 20px;
+}
+.popup__inner {
+  position: relative;
+  background: var(--butter);              /* sticky-note yellow */
+  border: var(--border-w) solid var(--ink);
+  box-shadow: 8px 8px 0 var(--shadow);
+  max-width: 460px;
+  width: 100%;
+  padding: 34px 26px 26px;
+  transform: rotate(-1.2deg);             /* casual handwritten tilt */
+  animation: popIn .2s ease-out;
+}
+.popup__close {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--cream);
+  border: 3px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--shadow);
+  cursor: pointer;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 5px 7px;
+}
+.popup__content { font-size: 22px; line-height: 1.5; }
+.popup__content strong { font-family: 'Press Start 2P', monospace; font-size: 13px; }
+
+/* ===========================================================
+   RESPONSIVE — keep it playable on phones
+   =========================================================== */
+@media (max-width: 600px) {
+  .topbar__title { font-size: 12px; }
+  .building { min-width: 96px; padding: 12px 14px; }
+  .building__emoji { font-size: 30px; }
+  .building__name  { font-size: 8px; }
+  .window { height: 94vh; }
+}
+
