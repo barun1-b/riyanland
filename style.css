@@ -1,0 +1,49 @@
+body {
+    margin: 0;
+    font-family: monospace;
+    background: #cfe8ff;
+}
+
+.title {
+    text-align: center;
+    padding: 20px;
+}
+
+.map {
+    position: relative;
+    width: 100vw;
+    height: 80vh;
+    background: url("https://i.imgur.com/8Qf2F8c.png"); /* temporary pixel town background */
+    background-size: cover;
+}
+
+/* clickable spots */
+.spot {
+    position: absolute;
+    background: rgba(255,255,255,0.8);
+    padding: 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: black;
+    transition: transform 0.2s;
+}
+
+.spot:hover {
+    transform: scale(1.1);
+}
+
+/* place positions */
+.apartment {
+    top: 60%;
+    left: 30%;
+}
+
+.library {
+    top: 40%;
+    left: 60%;
+}
+
+.beach {
+    top: 70%;
+    left: 80%;
+}
