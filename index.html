@@ -1,109 +1,804 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Baryuland 🏘️</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✿ Baryuland ✿</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brown-dark: #654320;
+    --brown-mid: #a9784d;
+    --brown-light: #c1a68b;
+    --beige: #f5ede3;
+    --blue: #9cb8c6;
+    --green: #a2a381;
+    --pink: #ca848e;
+    --cream: #fdf8f3;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; image-rendering: pixelated; }
+  body {
+    background: #2a1a08;
+    font-family: 'Press Start 2P', monospace;
+    overflow: hidden;
+    width: 100vw; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #game {
+    position: relative;
+    width: 640px; height: 480px;
+    overflow: hidden;
+    border: 4px solid var(--brown-mid);
+    box-shadow: 0 0 0 4px #2a1a08, 0 0 0 8px var(--brown-mid), 0 0 60px #00000099;
+  }
+  .screen { position: absolute; inset: 0; display: none; }
+  .screen.active { display: block; }
 
-  <!-- Retro / pixel fonts: Press Start 2P for headings, VT323 for body (readable) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+  /* TITLE */
+  #titleScreen {
+    background: var(--beige);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  #titleScreen.active { display: flex; }
+  .title-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #b8cfd8 0%, #ccdde6 35%, #d8c9b2 65%, #b0956e 100%);
+  }
+  .title-img-slot {
+    position: absolute; inset: 0;
+    /* ADD YOUR IMAGE: background-image: url('title-bg.gif'); background-size: cover; opacity: 0.25; */
+    background: repeating-linear-gradient(45deg, var(--green) 0px, var(--green) 2px, transparent 2px, transparent 14px);
+    opacity: 0.13;
+  }
+  .title-content {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+  }
+  .title-tag { font-size: 7px; color: var(--brown-mid); letter-spacing: 3px; font-family: 'Nunito', sans-serif; font-weight: 700; }
+  .title-main { font-size: 26px; color: var(--brown-dark); text-shadow: 3px 3px 0 var(--brown-light); letter-spacing: 2px; text-align: center; line-height: 1.5; }
+  .title-sub { font-size: 7px; color: var(--brown-mid); text-align: center; line-height: 2.2; }
+  .blink { animation: blink 1.2s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .start-btn {
+    margin-top: 8px; background: var(--brown-dark); color: var(--beige);
+    border: none; padding: 12px 30px;
+    font-family: 'Press Start 2P', monospace; font-size: 9px;
+    cursor: pointer; letter-spacing: 1px;
+    border-bottom: 4px solid #3a2010; transition: transform 0.1s;
+  }
+  .start-btn:active { transform: translateY(3px); border-bottom-width: 1px; }
 
-  <link rel="stylesheet" href="style.css" />
+  /* MAP */
+  #mapScreen { background: #7d8264; }
+  .map-bg {
+    position: absolute; inset: 0;
+    background: #8d9272;
+    /* ADD YOUR MAP: background-image: url('map.png'); background-size: cover; */
+  }
+  .map-bg::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(90deg, transparent 0, transparent 31px, #7d8264 31px, #7d8264 32px),
+      repeating-linear-gradient(180deg, transparent 0, transparent 31px, #7d8264 31px, #7d8264 32px);
+    opacity: 0.35;
+  }
+  .map-path { position: absolute; background: var(--brown-light); opacity: 0.45; }
+  .map-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    background: var(--brown-dark); padding: 8px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 10; border-bottom: 3px solid var(--brown-mid);
+  }
+  .map-header-title { font-size: 8px; color: var(--beige); letter-spacing: 1px; }
+  .map-header-hint { font-size: 6px; color: var(--brown-light); }
+
+  /* BUILDING SPOTS */
+  .bspot {
+    position: absolute; cursor: pointer; z-index: 5;
+    transition: transform 0.15s;
+  }
+  .bspot:hover { transform: scale(1.1); }
+  .bspot:hover .bspot-label { opacity: 1; }
+  .bspot-img {
+    width: 80px; height: 80px;
+    border: 3px solid var(--brown-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; position: relative;
+  }
+  .bspot-label {
+    position: absolute; bottom: -22px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--brown-dark); color: var(--beige);
+    font-size: 6px; padding: 3px 8px; white-space: nowrap;
+    opacity: 0; transition: opacity 0.15s;
+    border: 2px solid var(--brown-mid);
+  }
+  .bspot-new {
+    position: absolute; top: -6px; left: -6px;
+    width: 14px; height: 14px;
+    background: var(--pink); border: 2px solid var(--beige);
+    animation: npulse 1.4s step-end infinite;
+  }
+  @keyframes npulse { 0%,100%{opacity:1} 50%{opacity:0} }
+  .deco { position: absolute; font-size: 18px; pointer-events: none; }
+
+  /* INTERIOR */
+  #interiorScreen { background: #1a1008; }
+  .interior-bg {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .interior-pattern { position: absolute; inset: 0; }
+  .interior-top-bar {
+    position: absolute; top: 0; left: 0; right: 0;
+    background: var(--brown-dark); padding: 7px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 20; border-bottom: 3px solid var(--brown-mid);
+  }
+  .interior-place-name { font-size: 7px; color: var(--beige); }
+  .back-btn {
+    font-family: 'Press Start 2P', monospace; font-size: 6px;
+    color: var(--brown-light); background: none; border: none; cursor: pointer;
+  }
+  .back-btn:hover { color: var(--beige); }
+
+  /* DIALOGUE */
+  #dialogueBox {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--cream);
+    border-top: 4px solid var(--brown-dark);
+    padding: 16px 20px 14px;
+    z-index: 30; min-height: 138px; cursor: pointer;
+  }
+  .dialogue-name {
+    font-size: 7px; color: var(--brown-dark);
+    margin-bottom: 10px; letter-spacing: 1px;
+    border-left: 3px solid var(--pink); padding-left: 8px;
+  }
+  .dialogue-text {
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    font-size: 13px; color: var(--brown-dark);
+    line-height: 1.85; min-height: 48px;
+  }
+  .dialogue-choices { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .choice-btn {
+    background: transparent; border: 2px solid var(--brown-light);
+    padding: 8px 12px;
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    font-size: 12px; color: var(--brown-dark);
+    cursor: pointer; text-align: left;
+    display: flex; align-items: center; gap: 8px; transition: all 0.1s;
+  }
+  .choice-btn:hover { background: var(--brown-light); color: var(--cream); border-color: var(--brown-dark); }
+  .choice-btn::before { content: '▶'; font-size: 8px; color: var(--pink); }
+  .dialogue-next {
+    position: absolute; bottom: 12px; right: 18px;
+    font-size: 7px; color: var(--brown-mid);
+    animation: blink 1s step-end infinite; pointer-events: none;
+  }
+
+  /* MEMORY POPUP */
+  #memoryPopup {
+    position: absolute; inset: 0;
+    background: #00000088;
+    display: none; align-items: center; justify-content: center;
+    z-index: 50;
+  }
+  #memoryPopup.open { display: flex; }
+  .memory-card {
+    background: var(--cream);
+    border: 4px solid var(--brown-dark);
+    max-width: 390px; width: 90%;
+    padding: 26px 22px; text-align: center;
+    box-shadow: 6px 6px 0 var(--brown-dark);
+  }
+  .memory-tag { font-size: 7px; color: var(--pink); letter-spacing: 2px; margin-bottom: 12px; display: block; }
+  .memory-emoji { font-size: 38px; margin-bottom: 12px; display: block; }
+  .memory-title { font-size: 9px; color: var(--brown-dark); margin-bottom: 12px; line-height: 1.7; }
+  .memory-body {
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    font-size: 13px; color: var(--brown-mid);
+    line-height: 1.8; margin-bottom: 18px;
+  }
+  .memory-close {
+    background: var(--brown-dark); color: var(--beige);
+    border: none; padding: 10px 24px;
+    font-family: 'Press Start 2P', monospace; font-size: 8px;
+    cursor: pointer; border-bottom: 4px solid #3a2010;
+  }
+  .memory-close:active { transform: translateY(3px); border-bottom-width: 1px; }
+</style>
 </head>
 <body>
+<div id="game">
 
-  <!-- ====================================================== -->
-  <!-- TOP BAR — like a cute desktop / game title bar         -->
-  <!-- ====================================================== -->
-  <header class="topbar">
-    <span class="topbar__title">✦ Baryuland ✦</span>
-    <span class="topbar__hint" id="locationLabel">~ choose a place to wander ~</span>
-  </header>
-
-  <!-- ====================================================== -->
-  <!-- THE TOWN MAP (homepage)                                 -->
-  <!-- This is the "desktop". Buildings live here as hotspots. -->
-  <!-- ====================================================== -->
-  <main id="map" class="map">
-
-    <!-- 
-      BACKGROUND IMAGE:
-      Replace the placeholder by setting --map-bg in style.css
-      OR drop your map art at images/town-map.png
-      >>> INSERT YOUR TOWN MAP IMAGE: images/town-map.png <<<
+  <!-- ═══════════════════════════════════
+       TITLE SCREEN
+  ═══════════════════════════════════ -->
+  <div id="titleScreen" class="screen active">
+    <div class="title-bg"></div>
+    <div class="title-img-slot"></div>
+    <!--
+      💡 REPLACE title-img-slot background with your own image.
+         In the CSS above, find .title-img-slot and add:
+         background-image: url('your-title.gif');
+         background-size: cover; opacity: 0.3;
     -->
-
-    <!-- Each .building is a clickable location.
-         data-location matches a key in the LOCATIONS object in script.js.
-         Position is set with inline style (top/left %) so you can nudge them. -->
-
-    <button class="building" data-location="library" style="top:18%; left:14%;">
-      <span class="building__emoji">📚</span>
-      <span class="building__name">Library</span>
-    </button>
-
-    <button class="building" data-location="park" style="top:20%; left:62%;">
-      <span class="building__emoji">🌳</span>
-      <span class="building__name">Park</span>
-    </button>
-
-    <button class="building" data-location="arcade" style="top:48%; left:30%;">
-      <span class="building__emoji">🕹️</span>
-      <span class="building__name">Arcade</span>
-    </button>
-
-    <button class="building" data-location="cinema" style="top:50%; left:72%;">
-      <span class="building__emoji">🎬</span>
-      <span class="building__name">Cinema</span>
-    </button>
-
-    <button class="building" data-location="apartment" style="top:74%; left:20%;">
-      <span class="building__emoji">🏠</span>
-      <span class="building__name">Apartment</span>
-    </button>
-
-    <button class="building" data-location="beach" style="top:76%; left:64%;">
-      <span class="building__emoji">🏖️</span>
-      <span class="building__name">Beach</span>
-    </button>
-
-    <!-- A little hidden easter egg cat that wanders the map :3 -->
-    <button class="secret-cat" id="secretCat" title="...meow?">🐈</button>
-  </main>
-
-  <!-- ====================================================== -->
-  <!-- SCENE WINDOW — opens when you enter a location          -->
-  <!-- Styled like a chunky pastel Windows-95 window.          -->
-  <!-- ====================================================== -->
-  <section id="scene" class="scene hidden" aria-hidden="true">
-    <div class="window">
-
-      <!-- Title bar with close button -->
-      <div class="window__bar">
-        <span class="window__title" id="sceneTitle">Location</span>
-        <div class="window__buttons">
-          <button class="winbtn" id="backBtn" title="Back">↩</button>
-          <button class="winbtn winbtn--close" id="closeBtn" title="Back to town">✕</button>
-        </div>
+    <div class="title-content">
+      <span class="title-tag">a love letter in pixel form</span>
+      <div class="title-main">✿ Baryuland ✿</div>
+      <div class="title-sub">
+        our little town<br>
+        <span style="color:var(--pink)">[ explore &nbsp;·&nbsp; discover &nbsp;·&nbsp; remember ]</span>
       </div>
-
-      <!-- The actual scene content gets injected here by script.js -->
-      <div class="window__body" id="sceneBody"></div>
-
-    </div>
-  </section>
-
-  <!-- ====================================================== -->
-  <!-- POPUP — small note / message window (sticky-note style) -->
-  <!-- ====================================================== -->
-  <div id="popup" class="popup hidden">
-    <div class="popup__inner">
-      <button class="popup__close" id="popupClose">✕</button>
-      <div class="popup__content" id="popupContent"></div>
+      <button class="start-btn" onclick="goToMap()">▶ &nbsp; press start</button>
+      <span class="blink" style="font-size:6px;color:var(--brown-mid);">made just for you</span>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- ═══════════════════════════════════
+       MAP SCREEN
+  ═══════════════════════════════════ -->
+  <div id="mapScreen" class="screen">
+    <div class="map-bg">
+      <!--
+        💡 REPLACE with your bird's eye pixel town image.
+           Option A: In CSS .map-bg, add: background-image: url('map.png'); background-size: cover;
+           Option B: Drop an <img> tag here: <img src="map.png" style="width:100%;height:100%;object-fit:cover;">
+      -->
+    </div>
+
+    <!-- dirt paths (adjust or remove once you have a real map bg) -->
+    <div class="map-path" style="left:195px;top:120px;width:10px;height:210px;border-radius:5px;transform:rotate(8deg);"></div>
+    <div class="map-path" style="left:305px;top:92px;width:190px;height:10px;border-radius:5px;transform:rotate(4deg);"></div>
+    <div class="map-path" style="left:295px;top:240px;width:150px;height:10px;border-radius:5px;transform:rotate(-6deg);"></div>
+    <div class="map-path" style="left:175px;top:275px;width:10px;height:130px;border-radius:5px;transform:rotate(-4deg);"></div>
+
+    <div class="map-header">
+      <span class="map-header-title">✿ baryuland</span>
+      <span class="map-header-hint">click a place to explore</span>
+    </div>
+
+    <!--
+      BUILDING SPOTS
+      Adjust left/top to match your background image.
+      Replace emoji with <img src="your-sprite.png" style="width:100%;height:100%;">
+      💡 The bspot-new div = the pink blinking NEW dot. Remove it once they've visited.
+    -->
+
+    <!-- LIBRARY -->
+    <div class="bspot" style="left:44px;top:88px;" onclick="enterBuilding('library')">
+      <div class="bspot-img" style="background:#c1a68b99;">
+        📚
+      </div>
+      <div class="bspot-new"></div>
+      <div class="bspot-label">Library</div>
+    </div>
+
+    <!-- PARK -->
+    <div class="bspot" style="left:198px;top:58px;" onclick="enterBuilding('park')">
+      <div class="bspot-img" style="background:#a2a38199;">
+        🌳
+      </div>
+      <div class="bspot-label">Park</div>
+    </div>
+
+    <!-- CINEMA -->
+    <div class="bspot" style="left:388px;top:72px;" onclick="enterBuilding('cinema')">
+      <div class="bspot-img" style="background:#65432099;">
+        🎬
+      </div>
+      <div class="bspot-label">Cinema</div>
+    </div>
+
+    <!-- ARCADE -->
+    <div class="bspot" style="left:506px;top:188px;" onclick="enterBuilding('arcade')">
+      <div class="bspot-img" style="background:#2a150899;">
+        🕹️
+      </div>
+      <div class="bspot-new"></div>
+      <div class="bspot-label">Arcade</div>
+    </div>
+
+    <!-- APARTMENT -->
+    <div class="bspot" style="left:255px;top:238px;" onclick="enterBuilding('apartment')">
+      <div class="bspot-img" style="background:#9cb8c699;">
+        🏠
+      </div>
+      <div class="bspot-label">Apartment</div>
+    </div>
+
+    <!-- BEACH -->
+    <div class="bspot" style="left:76px;top:308px;" onclick="enterBuilding('beach')">
+      <div class="bspot-img" style="background:#9cb8c699;">
+        🌊
+      </div>
+      <div class="bspot-label">Beach</div>
+    </div>
+
+    <!-- decorations -->
+    <div class="deco" style="left:168px;top:195px;">🌸</div>
+    <div class="deco" style="left:376px;top:215px;">🌿</div>
+    <div class="deco" style="left:454px;top:305px;">🌸</div>
+    <div class="deco" style="left:336px;top:358px;">🌼</div>
+    <div class="deco" style="left:28px;top:228px;">🌿</div>
+    <div class="deco" style="left:555px;top:98px;">🌸</div>
+    <div class="deco" style="left:130px;top:170px;">🌼</div>
+    <div class="deco" style="left:480px;top:390px;">🌿</div>
+
+    <div style="position:absolute;bottom:8px;right:12px;font-size:6px;color:var(--brown-dark);opacity:0.45;">
+      ✿ baryuland &nbsp;·&nbsp; free roam
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       INTERIOR SCREEN
+  ═══════════════════════════════════ -->
+  <div id="interiorScreen" class="screen">
+    <div class="interior-bg" id="interiorBg">
+      <div class="interior-pattern" id="interiorPattern"></div>
+      <!--
+        💡 SWAP INTERIOR IMAGE PER BUILDING:
+           In the JS below, each building has a bgImage property (commented out).
+           Uncomment it and point it to your pixel interior gif/image.
+           e.g.  bgImage: "url('library-interior.gif')"
+      -->
+    </div>
+
+    <div class="interior-top-bar">
+      <span class="interior-place-name" id="interiorName">—</span>
+      <button class="back-btn" onclick="goToMap()">← back to map</button>
+    </div>
+
+    <div id="dialogueBox" onclick="advanceDialogue()">
+      <div class="dialogue-name" id="dlgName">narrator</div>
+      <div class="dialogue-text" id="dlgText"></div>
+      <div class="dialogue-choices" id="dlgChoices" style="display:none;"></div>
+      <div class="dialogue-next" id="dlgNext" style="display:none;">▼ click to continue</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       MEMORY UNLOCKED POPUP
+  ═══════════════════════════════════ -->
+  <div id="memoryPopup">
+    <div class="memory-card">
+      <span class="memory-tag">✦ &nbsp; memory unlocked &nbsp; ✦</span>
+      <span class="memory-emoji" id="memEmoji">💛</span>
+      <div class="memory-title" id="memTitle">—</div>
+      <div class="memory-body" id="memBody">—</div>
+      <button class="memory-close" onclick="closeMemory()">keep it &nbsp;✿</button>
+    </div>
+  </div>
+
+</div>
+<script>
+// ══════════════════════════════════════════════════════════════
+//  STORYLINES — edit everything inside buildings = { ... }
+//
+//  Each building has:
+//    name       → displayed in top bar
+//    bgColor    → dark background colour while interior loads
+//    bgPattern  → CSS pattern (placeholder until you add real images)
+//    bgImage    → uncomment + point to your pixel art gif/image
+//    scenes     → array of dialogue scenes played in order
+//
+//  Each scene has:
+//    name       → speaker label (e.g. "narrator", "a note on the table")
+//    text       → the dialogue text (types out letter by letter)
+//    choices    → optional branching choices: [{ label, next }]
+//                 next = index of scene to jump to
+//    memory     → optional { emoji, title, body } — the "gift" unlocked here
+// ══════════════════════════════════════════════════════════════
+
+const buildings = {
+
+  library: {
+    name: 'Library',
+    bgColor: '#2b1f12',
+    bgPattern: `repeating-linear-gradient(90deg,#3a2a18 0,#3a2a18 1px,transparent 1px,transparent 32px),
+                repeating-linear-gradient(180deg,#3a2a18 0,#3a2a18 1px,transparent 1px,transparent 32px)`,
+    // bgImage: "url('library-interior.gif')",
+    scenes: [
+      {
+        name: 'narrator',
+        text: 'You step inside the library. It smells like old books and warm tea. The afternoon light comes in sideways through tall windows.'
+      },
+      {
+        name: 'narrator',
+        text: 'The shelves go all the way up to the ceiling. There\'s a cozy armchair by the window with a small side table. Someone left a bookmark shaped like a pressed flower.'
+      },
+      {
+        name: 'a small note on the table',
+        text: '"I saved you this spot. It\'s the best one in the whole library — the sun hits it perfectly at 3pm. You\'re welcome. — me 💛"'
+      },
+      {
+        name: 'narrator',
+        text: 'You notice a book left open on the armchair. It has pencil annotations in the margins — tiny hearts, question marks, underlines.',
+        choices: [
+          { label: 'Read the annotations', next: 4 },
+          { label: 'Look out the window instead', next: 5 }
+        ]
+      },
+      {
+        name: 'the margins of the book',
+        text: '"this part got me — did it get you? — circled three times — I think about this a lot — ← this one\'s for you"',
+        memory: {
+          emoji: '📖',
+          title: 'a book we\'d read together',
+          body: 'One day we\'re going to sit in a library just like this one. You\'ll read your thing and I\'ll read mine, and it\'ll be the most peaceful afternoon ever. I can\'t wait for that day.'
+        }
+      },
+      {
+        name: 'narrator',
+        text: 'Outside: a quiet street. A cat on a wall. Two people walking slowly, nowhere to be. You think about how nice it is to have nowhere to be.',
+        memory: {
+          emoji: '🪟',
+          title: 'our slow days',
+          body: 'My favourite version of us is when we have nothing to do and nowhere to go. Just existing somewhere together. Those are my favourite days.'
+        }
+      }
+    ]
+  },
+
+  park: {
+    name: 'Park',
+    bgColor: '#1e2e14',
+    bgPattern: `repeating-linear-gradient(90deg,#253818 0,#253818 1px,transparent 1px,transparent 24px),
+                repeating-linear-gradient(180deg,#253818 0,#253818 1px,transparent 1px,transparent 24px)`,
+    // bgImage: "url('park-interior.gif')",
+    scenes: [
+      {
+        name: 'narrator',
+        text: 'The park is golden right now. That specific afternoon light that makes everything look a little bit magic.'
+      },
+      {
+        name: 'narrator',
+        text: 'There\'s a big tree in the middle. Under it: a picnic blanket, a half-eaten bag of crisps, and two cups of something warm.'
+      },
+      {
+        name: 'a note on the blanket',
+        text: '"I got here early to get the good spot. Obviously. You\'re welcome. Come sit. 🌿"'
+      },
+      {
+        name: 'narrator',
+        text: 'You sit down. The grass is soft and the air smells like flowers. Somewhere nearby a bird is going absolutely feral about something.',
+        choices: [
+          { label: 'Lie back and watch the clouds', next: 4 },
+          { label: 'Eat the crisps immediately', next: 5 }
+        ]
+      },
+      {
+        name: 'narrator',
+        text: 'The clouds are doing that thing where they look like shapes. You see: a rabbit. A boot. Something that might be a dog or a sofa.',
+        memory: {
+          emoji: '☁️',
+          title: 'cloud watching date',
+          body: 'We should do this for real one day. Blanket, snacks, absolutely no plans. I\'ll point at clouds and make things up and you\'ll pretend I\'m wrong even when I\'m right.'
+        }
+      },
+      {
+        name: 'narrator',
+        text: 'The crisps are actually really good. You feel no guilt. This is what parks are for.',
+        memory: {
+          emoji: '🌿',
+          title: 'our picnic date',
+          body: 'I really want to go on a proper picnic with you. Somewhere pretty. With good snacks and good company. (That\'s you. You\'re the good company.)'
+        }
+      }
+    ]
+  },
+
+  cinema: {
+    name: 'Cinema Baryu',
+    bgColor: '#0d0d1a',
+    bgPattern: `radial-gradient(circle at 50% 30%,#1a0a2e 0%,#0d0d1a 60%)`,
+    // bgImage: "url('cinema-interior.gif')",
+    scenes: [
+      {
+        name: 'narrator',
+        text: 'The cinema smells like popcorn and something slightly sticky you\'re choosing not to think about. Warm dim lights everywhere.'
+      },
+      {
+        name: 'narrator',
+        text: 'Two seats in the middle have little paper signs on them: RESERVED. One has a small bag of your favourite snacks.'
+      },
+      {
+        name: 'the paper sign',
+        text: '"saved. don\'t even think about sitting here if you\'re not you. — the management (that\'s me) 🎬"'
+      },
+      {
+        name: 'narrator',
+        text: 'The trailers start. Someone\'s phone goes off in the back. Everyone mentally judges them. You and I share a look.',
+        choices: [
+          { label: 'Steal some of my popcorn', next: 4 },
+          { label: 'Watch the trailers properly', next: 5 }
+        ]
+      },
+      {
+        name: 'narrator',
+        text: 'I pretend to be annoyed. I\'m not annoyed. You can always have some of my popcorn. That\'s just the deal.',
+        memory: {
+          emoji: '🍿',
+          title: 'movie night',
+          body: 'Our next movie night: your pick, my snacks, one blanket that we will definitely fight over. I\'m already looking forward to it.'
+        }
+      },
+      {
+        name: 'narrator',
+        text: 'The trailer is for something that looks either incredible or terrible. We genuinely can\'t tell. We\'ll probably watch it anyway.',
+        memory: {
+          emoji: '🎞️',
+          title: 'our watchlist',
+          body: 'We have so many things to watch together and not enough evenings. Let\'s fix that. I want to watch all of them with you.'
+        }
+      }
+    ]
+  },
+
+  arcade: {
+    name: 'Baryu Arcade',
+    bgColor: '#1a0a2a',
+    bgPattern: `repeating-linear-gradient(90deg,#2a0f3a 0,#2a0f3a 1px,transparent 1px,transparent 16px),
+                repeating-linear-gradient(180deg,#2a0f3a 0,#2a0f3a 1px,transparent 1px,transparent 16px)`,
+    // bgImage: "url('arcade-interior.gif')",
+    scenes: [
+      {
+        name: 'narrator',
+        text: 'The arcade is loud and bright and slightly overwhelming. Neon lights everywhere. The sound of seventeen games playing at once.'
+      },
+      {
+        name: 'narrator',
+        text: 'You find a two-player cabinet in the corner. Player 1 is already taken — there\'s a handwritten note taped to the joystick.'
+      },
+      {
+        name: 'the note',
+        text: '"player 2 always wins. that\'s just facts. prove me wrong. 🕹️"'
+      },
+      {
+        name: 'narrator',
+        text: 'The game loads. It\'s something retro with chunky pixels and a chiptune soundtrack that somehow slaps.',
+        choices: [
+          { label: 'Challenge accepted. Let\'s go.', next: 4 },
+          { label: 'Suggest the claw machine instead', next: 5 }
+        ]
+      },
+      {
+        name: 'narrator',
+        text: 'You play three rounds. The scores are disputed. Someone (me) claims a technical foul. The investigation is ongoing.',
+        memory: {
+          emoji: '🏆',
+          title: 'unresolved rivalry',
+          body: 'We\'re going to play so many games together and I\'m going to win some of them and be very gracious about it. You\'re welcome in advance.'
+        }
+      },
+      {
+        name: 'narrator',
+        text: 'The claw machine has a small stuffed bear that\'s been there for months. Neither of us wins it. It\'s still very fun.',
+        memory: {
+          emoji: '🧸',
+          title: 'arcade date',
+          body: 'I want to take you to an actual arcade. We\'re going to spend too many tokens, win something small and weird, and I\'m going to keep it forever.'
+        }
+      }
+    ]
+  },
+
+  apartment: {
+    name: 'Our Apartment',
+    bgColor: '#1a1408',
+    bgPattern: `repeating-linear-gradient(90deg,#251e0f 0,#251e0f 1px,transparent 1px,transparent 40px),
+                repeating-linear-gradient(180deg,#251e0f 0,#251e0f 1px,transparent 1px,transparent 40px)`,
+    // bgImage: "url('apartment-interior.gif')",
+    scenes: [
+      {
+        name: 'narrator',
+        text: 'Home. It smells familiar. There\'s soft music playing from somewhere — so quiet you\'re not sure if you\'re imagining it.'
+      },
+      {
+        name: 'narrator',
+        text: 'The fairy lights are on even though it\'s afternoon. Blankets on the couch. Someone made tea and left it on the table.'
+      },
+      {
+        name: 'a sticky note on the kettle',
+        text: '"made you tea. it\'s probably slightly cold now. sorry about that. love you though. — me 🕯️"'
+      },
+      {
+        name: 'narrator',
+        text: 'You sit on the couch. The good couch. Broken in just right. You feel your whole body relax.',
+        choices: [
+          { label: 'Read the letter on the coffee table', next: 4 },
+          { label: 'Just sit here for a moment', next: 5 }
+        ]
+      },
+      {
+        name: 'the letter',
+        text: '"I don\'t say this enough: thank you. For everything. For being here. For choosing us — every single day. You\'re my favourite person. Always. 💛"',
+        memory: {
+          emoji: '💛',
+          title: 'home is you',
+          body: 'Wherever we are — that\'s home to me. As long as you\'re there. I mean that completely.'
+        }
+      },
+      {
+        name: 'narrator',
+        text: 'You just sit. The music plays. The tea goes cold. It\'s somehow one of the nicest moments you\'ve had in a while.',
+        memory: {
+          emoji: '🕯️',
+          title: 'doing nothing, together',
+          body: 'Some of my favourite memories with you aren\'t even events. They\'re just moments. Being in the same room. Existing near each other. I love those ones most.'
+        }
+      }
+    ]
+  },
+
+  beach: {
+    name: 'Baryu Beach',
+    bgColor: '#0a1a2a',
+    bgPattern: `repeating-linear-gradient(180deg,#0d2030 0,#0d2030 1px,transparent 1px,transparent 20px)`,
+    // bgImage: "url('beach-interior.gif')",
+    scenes: [
+      {
+        name: 'narrator',
+        text: 'The beach is quiet today. Just the sound of waves and wind and a seagull somewhere being dramatic about something.'
+      },
+      {
+        name: 'narrator',
+        text: 'The sand is warm. The water is that specific colour of blue that only exists at the sea. There\'s a towel laid out with a little sunhat on it.'
+      },
+      {
+        name: 'a bottle, half-buried in the sand',
+        text: '"I left this here for you specifically. Dig it up. Open it. Read it. — someone who really likes you 🌊"'
+      },
+      {
+        name: 'narrator',
+        text: 'You sit at the water\'s edge. The waves come right up to your feet. You\'re not sure if it\'s cold. It doesn\'t matter.',
+        choices: [
+          { label: 'Open the bottle now', next: 4 },
+          { label: 'Watch the waves for a bit first', next: 5 }
+        ]
+      },
+      {
+        name: 'the message in the bottle',
+        text: '"Dear you — if you\'re reading this, you found it. Good. I put thought into burying it at exactly the right spot. The message is: I\'m really glad you exist. That\'s it. 💛"',
+        memory: {
+          emoji: '🐚',
+          title: 'message in a bottle',
+          body: 'One day I want to write you a real letter and put it somewhere for you to find. A proper one, with your name on it. Consider this the preview.'
+        }
+      },
+      {
+        name: 'narrator',
+        text: 'The waves are rhythmic and patient. They\'ve been doing this for millions of years. They don\'t mind waiting. Neither do you.',
+        memory: {
+          emoji: '🌅',
+          title: 'beach day, us',
+          body: 'I want to watch a sunset with you at the sea. A proper one. Where the sky goes all pink and orange and everything feels a little cinematic. We should go.'
+        }
+      }
+    ]
+  }
+
+};
+
+// ══════════════════════════════════════════════════════════════
+//  ENGINE — no need to edit below here
+// ══════════════════════════════════════════════════════════════
+let currentBuilding = null;
+let currentScene = 0;
+let typing = false;
+let typeInterval = null;
+let fullText = '';
+let pendingMemory = null;
+
+function goToMap() {
+  ['titleScreen','interiorScreen'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById('mapScreen').classList.add('active');
+  currentBuilding = null;
+}
+
+function enterBuilding(id) {
+  currentBuilding = id;
+  currentScene = 0;
+  const b = buildings[id];
+  const bg = document.getElementById('interiorBg');
+  bg.style.background = b.bgColor;
+  document.getElementById('interiorPattern').style.background = b.bgPattern;
+  if (b.bgImage) {
+    bg.style.backgroundImage = b.bgImage;
+    bg.style.backgroundSize = 'cover';
+    bg.style.backgroundPosition = 'center';
+  } else {
+    bg.style.backgroundImage = '';
+  }
+  document.getElementById('interiorName').textContent = '✿ ' + b.name;
+  document.getElementById('mapScreen').classList.remove('active');
+  document.getElementById('interiorScreen').classList.add('active');
+  showScene(0);
+}
+
+function showScene(index) {
+  const b = buildings[currentBuilding];
+  if (index >= b.scenes.length) { goToMap(); return; }
+  currentScene = index;
+  const scene = b.scenes[index];
+  document.getElementById('dlgName').textContent = scene.name;
+  document.getElementById('dlgChoices').style.display = 'none';
+  document.getElementById('dlgChoices').innerHTML = '';
+  document.getElementById('dlgNext').style.display = 'none';
+  pendingMemory = scene.memory || null;
+  typeText(scene.text, () => {
+    if (scene.choices) showChoices(scene.choices);
+    else document.getElementById('dlgNext').style.display = 'block';
+  });
+}
+
+function typeText(text, onDone) {
+  if (typeInterval) clearInterval(typeInterval);
+  fullText = text;
+  typing = true;
+  const el = document.getElementById('dlgText');
+  el.textContent = '';
+  let i = 0;
+  typeInterval = setInterval(() => {
+    el.textContent += text[i]; i++;
+    if (i >= text.length) {
+      clearInterval(typeInterval); typing = false;
+      if (onDone) onDone();
+    }
+  }, 20);
+}
+
+function advanceDialogue() {
+  if (typing) {
+    clearInterval(typeInterval); typing = false;
+    document.getElementById('dlgText').textContent = fullText;
+    const scene = buildings[currentBuilding].scenes[currentScene];
+    if (scene.choices) showChoices(scene.choices);
+    else document.getElementById('dlgNext').style.display = 'block';
+    return;
+  }
+  const scene = buildings[currentBuilding].scenes[currentScene];
+  if (scene.choices) return;
+  if (pendingMemory) { showMemory(pendingMemory); pendingMemory = null; return; }
+  showScene(currentScene + 1);
+}
+
+function showChoices(choices) {
+  const el = document.getElementById('dlgChoices');
+  el.style.display = 'flex'; el.innerHTML = '';
+  choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c.label;
+    btn.onclick = e => { e.stopPropagation(); showScene(c.next); };
+    el.appendChild(btn);
+  });
+}
+
+function showMemory(mem) {
+  document.getElementById('memEmoji').textContent = mem.emoji;
+  document.getElementById('memTitle').textContent = mem.title;
+  document.getElementById('memBody').textContent = mem.body;
+  document.getElementById('memoryPopup').classList.add('open');
+}
+
+function closeMemory() {
+  document.getElementById('memoryPopup').classList.remove('open');
+  showScene(currentScene + 1);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === ' ' || e.key === 'Enter') {
+    if (document.getElementById('interiorScreen').classList.contains('active')) advanceDialogue();
+  }
+  if (e.key === 'Escape') {
+    if (document.getElementById('memoryPopup').classList.contains('open')) closeMemory();
+    else if (document.getElementById('interiorScreen').classList.contains('active')) goToMap();
+  }
+});
+</script>
 </body>
 </html>
