@@ -1,804 +1,906 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>✿ Baryuland ✿</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<title>Baryuland ♥</title>
 <style>
-  :root {
-    --brown-dark: #654320;
-    --brown-mid: #a9784d;
-    --brown-light: #c1a68b;
-    --beige: #f5ede3;
-    --blue: #9cb8c6;
-    --green: #a2a381;
-    --pink: #ca848e;
-    --cream: #fdf8f3;
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap');
+
   * { box-sizing: border-box; margin: 0; padding: 0; image-rendering: pixelated; }
+
   body {
-    background: #2a1a08;
-    font-family: 'Press Start 2P', monospace;
+    font-family: 'MS Sans Serif', Arial, sans-serif;
     overflow: hidden;
-    width: 100vw; height: 100vh;
-    display: flex; align-items: center; justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background: #008080;
   }
-  #game {
+
+  #win95-screen {
+    width: 100%;
+    height: 100%;
+    background: #008080;
     position: relative;
-    width: 640px; height: 480px;
     overflow: hidden;
-    border: 4px solid var(--brown-mid);
-    box-shadow: 0 0 0 4px #2a1a08, 0 0 0 8px var(--brown-mid), 0 0 60px #00000099;
   }
-  .screen { position: absolute; inset: 0; display: none; }
-  .screen.active { display: block; }
 
-  /* TITLE */
-  #titleScreen {
-    background: var(--beige);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
+  .win95-desktop {
+    width: 100%;
+    height: calc(100% - 28px);
+    position: relative;
   }
-  #titleScreen.active { display: flex; }
-  .title-bg {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, #b8cfd8 0%, #ccdde6 35%, #d8c9b2 65%, #b0956e 100%);
-  }
-  .title-img-slot {
-    position: absolute; inset: 0;
-    /* ADD YOUR IMAGE: background-image: url('title-bg.gif'); background-size: cover; opacity: 0.25; */
-    background: repeating-linear-gradient(45deg, var(--green) 0px, var(--green) 2px, transparent 2px, transparent 14px);
-    opacity: 0.13;
-  }
-  .title-content {
-    position: relative; z-index: 2;
-    display: flex; flex-direction: column; align-items: center; gap: 18px;
-  }
-  .title-tag { font-size: 7px; color: var(--brown-mid); letter-spacing: 3px; font-family: 'Nunito', sans-serif; font-weight: 700; }
-  .title-main { font-size: 26px; color: var(--brown-dark); text-shadow: 3px 3px 0 var(--brown-light); letter-spacing: 2px; text-align: center; line-height: 1.5; }
-  .title-sub { font-size: 7px; color: var(--brown-mid); text-align: center; line-height: 2.2; }
-  .blink { animation: blink 1.2s step-end infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-  .start-btn {
-    margin-top: 8px; background: var(--brown-dark); color: var(--beige);
-    border: none; padding: 12px 30px;
-    font-family: 'Press Start 2P', monospace; font-size: 9px;
-    cursor: pointer; letter-spacing: 1px;
-    border-bottom: 4px solid #3a2010; transition: transform 0.1s;
-  }
-  .start-btn:active { transform: translateY(3px); border-bottom-width: 1px; }
 
-  /* MAP */
-  #mapScreen { background: #7d8264; }
-  .map-bg {
-    position: absolute; inset: 0;
-    background: #8d9272;
-    /* ADD YOUR MAP: background-image: url('map.png'); background-size: cover; */
+  .desktop-icon {
+    position: absolute;
+    width: 64px;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    font-size: 11px;
+    user-select: none;
   }
-  .map-bg::before {
-    content: '';
-    position: absolute; inset: 0;
-    background:
-      repeating-linear-gradient(90deg, transparent 0, transparent 31px, #7d8264 31px, #7d8264 32px),
-      repeating-linear-gradient(180deg, transparent 0, transparent 31px, #7d8264 31px, #7d8264 32px);
-    opacity: 0.35;
+  .desktop-icon .icon-img {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 4px;
+    display: block;
   }
-  .map-path { position: absolute; background: var(--brown-light); opacity: 0.45; }
-  .map-header {
-    position: absolute; top: 0; left: 0; right: 0;
-    background: var(--brown-dark); padding: 8px 14px;
-    display: flex; align-items: center; justify-content: space-between;
-    z-index: 10; border-bottom: 3px solid var(--brown-mid);
-  }
-  .map-header-title { font-size: 8px; color: var(--beige); letter-spacing: 1px; }
-  .map-header-hint { font-size: 6px; color: var(--brown-light); }
+  .desktop-icon:hover { filter: brightness(1.3); }
 
-  /* BUILDING SPOTS */
-  .bspot {
-    position: absolute; cursor: pointer; z-index: 5;
+  .win95-window {
+    position: absolute;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    box-shadow: 2px 2px 0 #000;
+    min-width: 200px;
+  }
+  .win95-titlebar {
+    background: linear-gradient(to right, #000080, #1084d0);
+    color: white;
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: move;
+    user-select: none;
+  }
+  .win95-titlebar-buttons {
+    display: flex;
+    gap: 2px;
+  }
+  .win95-btn-sm {
+    width: 14px;
+    height: 14px;
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    font-size: 9px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial;
+    line-height: 1;
+  }
+  .win95-content {
+    padding: 8px;
+    font-size: 11px;
+    color: #000;
+  }
+
+  .love-note {
+    position: absolute;
+    background: #fffde7;
+    border: 1px solid #c0c0c0;
+    padding: 6px 8px;
+    color: #654320;
+    max-width: 120px;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    line-height: 1.3;
+    transform: rotate(-2deg);
+  }
+  .love-note:nth-child(2n) { transform: rotate(2deg); background: #fce4ec; }
+  .love-note:nth-child(3n) { transform: rotate(-1deg); background: #e8f5e9; }
+
+  .win95-taskbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 28px;
+    background: #c0c0c0;
+    border-top: 2px solid #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
+  }
+  .start-button {
+    height: 22px;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: Arial;
+  }
+  .start-button:active { border-color: #808080 #ffffff #ffffff #808080; }
+  .taskbar-divider { width: 2px; height: 20px; background: #808080; border-right: 1px solid #fff; }
+  .taskbar-time {
+    margin-left: auto;
+    font-size: 11px;
+    border: 1px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding: 2px 6px;
+  }
+
+  #main-window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    width: 400px;
+    z-index: 10;
+  }
+  #main-window .win95-content {
+    text-align: center;
+    padding: 20px;
+  }
+  .baryuland-title {
+    font-family: 'VT323', monospace;
+    font-size: 32px;
+    color: #654320;
+    margin-bottom: 4px;
+    text-shadow: 2px 2px 0 #c1a68b;
+  }
+  .baryuland-sub {
+    font-size: 11px;
+    color: #808080;
+    margin-bottom: 16px;
+  }
+  .pixel-heart {
+    font-size: 20px;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+  .enter-game-btn {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 8px 24px;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .enter-game-btn:hover { background: #d4d0c8; }
+  .enter-game-btn:active { border-color: #808080 #ffffff #ffffff #808080; }
+
+  #game-screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background: #9cb8c6;
+    position: relative;
+    overflow: hidden;
+  }
+  #game-screen.active { display: block; }
+
+  #map-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #pixel-map {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .location-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    cursor: pointer;
+    z-index: 5;
+  }
+  .location-label .loc-icon {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 24px;
+    display: block;
+    margin-bottom: 4px;
+    filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
     transition: transform 0.15s;
   }
-  .bspot:hover { transform: scale(1.1); }
-  .bspot:hover .bspot-label { opacity: 1; }
-  .bspot-img {
-    width: 80px; height: 80px;
-    border: 3px solid var(--brown-dark);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 30px; position: relative;
+  .location-label .loc-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: #654320;
+    background: rgba(255,255,255,0.85);
+    padding: 3px 5px;
+    border: 1px solid #a9784d;
+    white-space: nowrap;
   }
-  .bspot-label {
-    position: absolute; bottom: -22px; left: 50%;
-    transform: translateX(-50%);
-    background: var(--brown-dark); color: var(--beige);
-    font-size: 6px; padding: 3px 8px; white-space: nowrap;
-    opacity: 0; transition: opacity 0.15s;
-    border: 2px solid var(--brown-mid);
-  }
-  .bspot-new {
-    position: absolute; top: -6px; left: -6px;
-    width: 14px; height: 14px;
-    background: var(--pink); border: 2px solid var(--beige);
-    animation: npulse 1.4s step-end infinite;
-  }
-  @keyframes npulse { 0%,100%{opacity:1} 50%{opacity:0} }
-  .deco { position: absolute; font-size: 18px; pointer-events: none; }
+  .location-label:hover .loc-icon { transform: scale(1.2) translateY(-3px); }
+  .location-label:hover .loc-name { background: #fce4ec; color: #ca848e; }
 
-  /* INTERIOR */
-  #interiorScreen { background: #1a1008; }
-  .interior-bg {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .interior-pattern { position: absolute; inset: 0; }
-  .interior-top-bar {
-    position: absolute; top: 0; left: 0; right: 0;
-    background: var(--brown-dark); padding: 7px 14px;
-    display: flex; align-items: center; justify-content: space-between;
-    z-index: 20; border-bottom: 3px solid var(--brown-mid);
-  }
-  .interior-place-name { font-size: 7px; color: var(--beige); }
-  .back-btn {
-    font-family: 'Press Start 2P', monospace; font-size: 6px;
-    color: var(--brown-light); background: none; border: none; cursor: pointer;
-  }
-  .back-btn:hover { color: var(--beige); }
-
-  /* DIALOGUE */
-  #dialogueBox {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: var(--cream);
-    border-top: 4px solid var(--brown-dark);
-    padding: 16px 20px 14px;
-    z-index: 30; min-height: 138px; cursor: pointer;
-  }
-  .dialogue-name {
-    font-size: 7px; color: var(--brown-dark);
-    margin-bottom: 10px; letter-spacing: 1px;
-    border-left: 3px solid var(--pink); padding-left: 8px;
-  }
-  .dialogue-text {
-    font-family: 'Nunito', sans-serif; font-weight: 700;
-    font-size: 13px; color: var(--brown-dark);
-    line-height: 1.85; min-height: 48px;
-  }
-  .dialogue-choices { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
-  .choice-btn {
-    background: transparent; border: 2px solid var(--brown-light);
+  #location-tooltip {
+    position: absolute;
+    background: #fffde7;
+    border: 2px solid #a9784d;
     padding: 8px 12px;
-    font-family: 'Nunito', sans-serif; font-weight: 700;
-    font-size: 12px; color: var(--brown-dark);
-    cursor: pointer; text-align: left;
-    display: flex; align-items: center; gap: 8px; transition: all 0.1s;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    color: #654320;
+    pointer-events: none;
+    z-index: 20;
+    display: none;
+    max-width: 160px;
+    text-align: center;
+    box-shadow: 3px 3px 0 #a9784d;
   }
-  .choice-btn:hover { background: var(--brown-light); color: var(--cream); border-color: var(--brown-dark); }
-  .choice-btn::before { content: '▶'; font-size: 8px; color: var(--pink); }
-  .dialogue-next {
-    position: absolute; bottom: 12px; right: 18px;
-    font-size: 7px; color: var(--brown-mid);
-    animation: blink 1s step-end infinite; pointer-events: none;
+  #location-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #a9784d;
   }
 
-  /* MEMORY POPUP */
-  #memoryPopup {
-    position: absolute; inset: 0;
-    background: #00000088;
-    display: none; align-items: center; justify-content: center;
-    z-index: 50;
+  #game-hud {
+    position: absolute;
+    top: 12px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
   }
-  #memoryPopup.open { display: flex; }
-  .memory-card {
-    background: var(--cream);
-    border: 4px solid var(--brown-dark);
-    max-width: 390px; width: 90%;
-    padding: 26px 22px; text-align: center;
-    box-shadow: 6px 6px 0 var(--brown-dark);
+  .hud-window {
+    background: rgba(192,192,192,0.95);
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 4px 16px;
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    color: #654320;
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-  .memory-tag { font-size: 7px; color: var(--pink); letter-spacing: 2px; margin-bottom: 12px; display: block; }
-  .memory-emoji { font-size: 38px; margin-bottom: 12px; display: block; }
-  .memory-title { font-size: 9px; color: var(--brown-dark); margin-bottom: 12px; line-height: 1.7; }
-  .memory-body {
-    font-family: 'Nunito', sans-serif; font-weight: 700;
-    font-size: 13px; color: var(--brown-mid);
-    line-height: 1.8; margin-bottom: 18px;
+  .hud-title {
+    font-size: 22px;
+    color: #000080;
+    font-weight: bold;
   }
-  .memory-close {
-    background: var(--brown-dark); color: var(--beige);
-    border: none; padding: 10px 24px;
-    font-family: 'Press Start 2P', monospace; font-size: 8px;
-    cursor: pointer; border-bottom: 4px solid #3a2010;
+
+  #back-to-menu {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 6px 12px;
+    font-family: Arial;
+    font-size: 11px;
+    cursor: pointer;
+    z-index: 10;
   }
-  .memory-close:active { transform: translateY(3px); border-bottom-width: 1px; }
+  #back-to-menu:active { border-color: #808080 #ffffff #ffffff #808080; }
+
+  #transition-overlay {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+  #transition-overlay.show { display: flex; }
+  .loading-bar-outer {
+    width: 200px;
+    height: 14px;
+    border: 2px solid #fff;
+    background: #000;
+  }
+  .loading-bar-inner {
+    height: 100%;
+    background: #000080;
+    width: 0%;
+    transition: width 0.05s linear;
+  }
+  .loading-text {
+    color: #fff;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+  }
 </style>
 </head>
 <body>
-<div id="game">
 
-  <!-- ═══════════════════════════════════
-       TITLE SCREEN
-  ═══════════════════════════════════ -->
-  <div id="titleScreen" class="screen active">
-    <div class="title-bg"></div>
-    <div class="title-img-slot"></div>
-    <!--
-      💡 REPLACE title-img-slot background with your own image.
-         In the CSS above, find .title-img-slot and add:
-         background-image: url('your-title.gif');
-         background-size: cover; opacity: 0.3;
-    -->
-    <div class="title-content">
-      <span class="title-tag">a love letter in pixel form</span>
-      <div class="title-main">✿ Baryuland ✿</div>
-      <div class="title-sub">
-        our little town<br>
-        <span style="color:var(--pink)">[ explore &nbsp;·&nbsp; discover &nbsp;·&nbsp; remember ]</span>
-      </div>
-      <button class="start-btn" onclick="goToMap()">▶ &nbsp; press start</button>
-      <span class="blink" style="font-size:6px;color:var(--brown-mid);">made just for you</span>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════
-       MAP SCREEN
-  ═══════════════════════════════════ -->
-  <div id="mapScreen" class="screen">
-    <div class="map-bg">
-      <!--
-        💡 REPLACE with your bird's eye pixel town image.
-           Option A: In CSS .map-bg, add: background-image: url('map.png'); background-size: cover;
-           Option B: Drop an <img> tag here: <img src="map.png" style="width:100%;height:100%;object-fit:cover;">
-      -->
-    </div>
-
-    <!-- dirt paths (adjust or remove once you have a real map bg) -->
-    <div class="map-path" style="left:195px;top:120px;width:10px;height:210px;border-radius:5px;transform:rotate(8deg);"></div>
-    <div class="map-path" style="left:305px;top:92px;width:190px;height:10px;border-radius:5px;transform:rotate(4deg);"></div>
-    <div class="map-path" style="left:295px;top:240px;width:150px;height:10px;border-radius:5px;transform:rotate(-6deg);"></div>
-    <div class="map-path" style="left:175px;top:275px;width:10px;height:130px;border-radius:5px;transform:rotate(-4deg);"></div>
-
-    <div class="map-header">
-      <span class="map-header-title">✿ baryuland</span>
-      <span class="map-header-hint">click a place to explore</span>
-    </div>
-
-    <!--
-      BUILDING SPOTS
-      Adjust left/top to match your background image.
-      Replace emoji with <img src="your-sprite.png" style="width:100%;height:100%;">
-      💡 The bspot-new div = the pink blinking NEW dot. Remove it once they've visited.
-    -->
-
-    <!-- LIBRARY -->
-    <div class="bspot" style="left:44px;top:88px;" onclick="enterBuilding('library')">
-      <div class="bspot-img" style="background:#c1a68b99;">
-        📚
-      </div>
-      <div class="bspot-new"></div>
-      <div class="bspot-label">Library</div>
-    </div>
-
-    <!-- PARK -->
-    <div class="bspot" style="left:198px;top:58px;" onclick="enterBuilding('park')">
-      <div class="bspot-img" style="background:#a2a38199;">
-        🌳
-      </div>
-      <div class="bspot-label">Park</div>
-    </div>
-
-    <!-- CINEMA -->
-    <div class="bspot" style="left:388px;top:72px;" onclick="enterBuilding('cinema')">
-      <div class="bspot-img" style="background:#65432099;">
-        🎬
-      </div>
-      <div class="bspot-label">Cinema</div>
-    </div>
-
-    <!-- ARCADE -->
-    <div class="bspot" style="left:506px;top:188px;" onclick="enterBuilding('arcade')">
-      <div class="bspot-img" style="background:#2a150899;">
-        🕹️
-      </div>
-      <div class="bspot-new"></div>
-      <div class="bspot-label">Arcade</div>
-    </div>
-
-    <!-- APARTMENT -->
-    <div class="bspot" style="left:255px;top:238px;" onclick="enterBuilding('apartment')">
-      <div class="bspot-img" style="background:#9cb8c699;">
-        🏠
-      </div>
-      <div class="bspot-label">Apartment</div>
-    </div>
-
-    <!-- BEACH -->
-    <div class="bspot" style="left:76px;top:308px;" onclick="enterBuilding('beach')">
-      <div class="bspot-img" style="background:#9cb8c699;">
-        🌊
-      </div>
-      <div class="bspot-label">Beach</div>
-    </div>
-
-    <!-- decorations -->
-    <div class="deco" style="left:168px;top:195px;">🌸</div>
-    <div class="deco" style="left:376px;top:215px;">🌿</div>
-    <div class="deco" style="left:454px;top:305px;">🌸</div>
-    <div class="deco" style="left:336px;top:358px;">🌼</div>
-    <div class="deco" style="left:28px;top:228px;">🌿</div>
-    <div class="deco" style="left:555px;top:98px;">🌸</div>
-    <div class="deco" style="left:130px;top:170px;">🌼</div>
-    <div class="deco" style="left:480px;top:390px;">🌿</div>
-
-    <div style="position:absolute;bottom:8px;right:12px;font-size:6px;color:var(--brown-dark);opacity:0.45;">
-      ✿ baryuland &nbsp;·&nbsp; free roam
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════
-       INTERIOR SCREEN
-  ═══════════════════════════════════ -->
-  <div id="interiorScreen" class="screen">
-    <div class="interior-bg" id="interiorBg">
-      <div class="interior-pattern" id="interiorPattern"></div>
-      <!--
-        💡 SWAP INTERIOR IMAGE PER BUILDING:
-           In the JS below, each building has a bgImage property (commented out).
-           Uncomment it and point it to your pixel interior gif/image.
-           e.g.  bgImage: "url('library-interior.gif')"
-      -->
-    </div>
-
-    <div class="interior-top-bar">
-      <span class="interior-place-name" id="interiorName">—</span>
-      <button class="back-btn" onclick="goToMap()">← back to map</button>
-    </div>
-
-    <div id="dialogueBox" onclick="advanceDialogue()">
-      <div class="dialogue-name" id="dlgName">narrator</div>
-      <div class="dialogue-text" id="dlgText"></div>
-      <div class="dialogue-choices" id="dlgChoices" style="display:none;"></div>
-      <div class="dialogue-next" id="dlgNext" style="display:none;">▼ click to continue</div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════
-       MEMORY UNLOCKED POPUP
-  ═══════════════════════════════════ -->
-  <div id="memoryPopup">
-    <div class="memory-card">
-      <span class="memory-tag">✦ &nbsp; memory unlocked &nbsp; ✦</span>
-      <span class="memory-emoji" id="memEmoji">💛</span>
-      <div class="memory-title" id="memTitle">—</div>
-      <div class="memory-body" id="memBody">—</div>
-      <button class="memory-close" onclick="closeMemory()">keep it &nbsp;✿</button>
-    </div>
-  </div>
-
+<!-- TRANSITION OVERLAY -->
+<div id="transition-overlay">
+  <div class="loading-text" id="loading-msg">Loading Baryuland...</div>
+  <div class="loading-bar-outer"><div class="loading-bar-inner" id="loading-bar"></div></div>
+  <div style="color:#808080; font-family:'VT323',monospace; font-size:14px;">Please wait...</div>
 </div>
+
+<!-- WIN95 START SCREEN -->
+<div id="win95-screen">
+  <div class="win95-desktop">
+
+    <!-- Desktop icons -->
+    <div class="desktop-icon" style="top:16px; left:16px;">
+      <svg class="icon-img" viewBox="0 0 32 32"><rect x="2" y="4" width="28" height="22" rx="1" fill="#c0c0c0" stroke="#808080"/><rect x="4" y="6" width="24" height="16" fill="#000080"/><rect x="10" y="28" width="12" height="2" fill="#808080"/><rect x="8" y="26" width="16" height="3" fill="#c0c0c0"/></svg>
+      My Computer
+    </div>
+    <div class="desktop-icon" style="top:90px; left:16px;">
+      <svg class="icon-img" viewBox="0 0 32 32"><rect x="2" y="8" width="20" height="16" rx="1" fill="#f5c518" stroke="#a0800a"/><rect x="4" y="10" width="14" height="2" fill="#654320" opacity="0.4"/><rect x="4" y="13" width="10" height="2" fill="#654320" opacity="0.4"/><polygon points="18,6 28,6 28,20 18,20" fill="#c0c0c0" stroke="#808080"/></svg>
+      My Documents
+    </div>
+    <div class="desktop-icon" style="top:164px; left:16px;">
+      <svg class="icon-img" viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#9cb8c6"/><path d="M8 10 Q16 4 24 10 Q28 16 24 22 Q16 28 8 22 Q4 16 8 10Z" fill="#1084d0" opacity="0.5"/><text x="16" y="20" text-anchor="middle" font-size="12" fill="white" font-weight="bold">e</text></svg>
+      Internet Explorer
+    </div>
+    <div class="desktop-icon" style="top:238px; left:16px;">
+      <svg class="icon-img" viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="2" fill="#a2a381"/><rect x="8" y="8" width="16" height="16" rx="1" fill="#c1a68b"/><rect x="10" y="10" width="6" height="6" fill="#654320"/><rect x="10" y="18" width="12" height="2" fill="#654320" opacity="0.5"/></svg>
+      Recycle Bin
+    </div>
+
+    <!-- Media Player window -->
+    <div class="win95-window" id="radio-window" style="top:60px; left:80px; width:280px;">
+      <div class="win95-titlebar" onmousedown="startDrag(event,'radio-window')">
+        <span>🎵 Baryuland Radio</span>
+        <div class="win95-titlebar-buttons">
+          <div class="win95-btn-sm" onclick="minimizeWindow('radio-window')" title="Minimize">_</div>
+          <div class="win95-btn-sm" onclick="maximizeWindow('radio-window')" title="Maximize">□</div>
+          <div class="win95-btn-sm" onclick="closeWindow('radio-window')" title="Close">✕</div>
+        </div>
+      </div>
+      <div class="win95-content" id="radio-window-body" style="padding:0;">
+        <div style="background:#000; height:80px; display:flex; align-items:center; justify-content:center;">
+          <div style="color:#ca848e; font-family:'VT323',monospace; font-size:16px; text-align:center; line-height:1.4;">♪ songs for baryuland ♪<br><span style="color:#9cb8c6;font-size:12px;">now playing: our song</span></div>
+        </div>
+        <div style="padding:6px; background:#c0c0c0; display:flex; align-items:center; gap:6px;">
+          <button style="background:#c0c0c0;border:2px solid;border-color:#fff #808080 #808080 #fff;padding:2px 6px;font-size:10px;cursor:pointer;">▶</button>
+          <button style="background:#c0c0c0;border:2px solid;border-color:#fff #808080 #808080 #fff;padding:2px 6px;font-size:10px;cursor:pointer;">⏹</button>
+          <div style="flex:1;height:6px;background:#808080;border:1px inset;position:relative;"><div style="position:absolute;left:30%;top:0;bottom:0;width:6px;background:#c0c0c0;border:1px solid;border-color:#fff #808080 #808080 #fff;"></div></div>
+          <span style="font-size:9px;color:#000;">🔊</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN BARYULAND WINDOW -->
+    <div class="win95-window" id="main-window">
+      <div class="win95-titlebar" onmousedown="startDrag(event,'main-window')">
+        <span>🏠 Welcome to Baryuland!</span>
+        <div class="win95-titlebar-buttons">
+          <div class="win95-btn-sm" onclick="minimizeWindow('main-window')" title="Minimize">_</div>
+          <div class="win95-btn-sm" onclick="maximizeWindow('main-window')" title="Maximize">□</div>
+        </div>
+      </div>
+      <div class="win95-content" id="main-window-body">
+        <div class="pixel-heart">★</div>
+        <div class="baryuland-title">BARYULAND</div>
+        <div class="baryuland-sub"> i love you so much, forever <3 </div>
+        <div style="border:2px inset #c0c0c0; padding:8px; background:#fff; font-size:10px; color:#000; line-height:1.6; margin-bottom:12px; text-align:left;">
+          Welcome back, player!<br>
+          Your cozy adventure awaits.<br>
+          Explore the map and find<br>
+          all the magical places~ ✨
+        </div>
+        <button class="enter-game-btn" onclick="startGame()">
+          <svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="1" fill="#9cb8c6"/><polygon points="5,4 12,8 5,12" fill="#654320"/></svg>
+          ▶ Enter Baryuland
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Win95 Taskbar -->
+  <div class="win95-taskbar">
+    <button class="start-button">
+      <svg width="16" height="16" viewBox="0 0 16 16"><rect x="0" y="0" width="7" height="7" fill="#ff0000"/><rect x="9" y="0" width="7" height="7" fill="#00aa00"/><rect x="0" y="9" width="7" height="7" fill="#0000ff"/><rect x="9" y="9" width="7" height="7" fill="#ffff00"/></svg>
+      Start
+    </button>
+    <div class="taskbar-divider"></div>
+    <div id="taskbar-windows" style="display:flex;gap:4px;align-items:center;"></div>
+    <div class="taskbar-time" id="clock">12:00 PM</div>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen">
+  <div id="map-container">
+    <svg id="pixel-map" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <rect width="900" height="600" fill="#c8e8f5"/>
+      <ellipse cx="100" cy="50" rx="40" ry="18" fill="#fff" opacity="0.8"/>
+      <ellipse cx="130" cy="45" rx="30" ry="20" fill="#fff" opacity="0.8"/>
+      <ellipse cx="70" cy="48" rx="28" ry="16" fill="#fff" opacity="0.8"/>
+      <ellipse cx="500" cy="70" rx="50" ry="20" fill="#fff" opacity="0.7"/>
+      <ellipse cx="540" cy="65" rx="35" ry="22" fill="#fff" opacity="0.7"/>
+      <ellipse cx="460" cy="68" rx="30" ry="18" fill="#fff" opacity="0.7"/>
+      <ellipse cx="750" cy="40" rx="42" ry="18" fill="#fff" opacity="0.75"/>
+      <ellipse cx="785" cy="35" rx="30" ry="20" fill="#fff" opacity="0.75"/>
+      <ellipse cx="720" cy="42" rx="28" ry="16" fill="#fff" opacity="0.75"/>
+      <rect x="0" y="420" width="900" height="180" fill="#a2a381"/>
+      <rect x="0" y="420" width="900" height="8" fill="#b5b894"/>
+      <rect x="0" y="580" width="900" height="20" fill="#8a8d6a"/>
+      <ellipse cx="820" cy="520" rx="90" ry="60" fill="#f5e6c3"/>
+      <ellipse cx="840" cy="540" rx="70" ry="40" fill="#9cb8c6" opacity="0.6"/>
+      <path d="M760 530 Q775 520 790 530 Q805 540 820 530 Q835 520 850 530" fill="none" stroke="#fff" stroke-width="2" opacity="0.7"/>
+      <path d="M765 545 Q780 535 795 545 Q810 555 825 545 Q840 535 855 545" fill="none" stroke="#fff" stroke-width="2" opacity="0.5"/>
+      <ellipse cx="100" cy="510" rx="80" ry="55" fill="#b8cc8a"/>
+      <ellipse cx="90" cy="520" rx="28" ry="16" fill="#9cb8c6" opacity="0.7"/>
+      <path d="M68 520 Q78 513 90 520 Q102 527 112 520" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.6"/>
+      <rect x="118" y="500" width="20" height="4" fill="#a9784d" rx="1"/>
+      <rect x="120" y="497" width="16" height="3" fill="#c1a68b" rx="1"/>
+      <rect x="120" y="504" width="3" height="5" fill="#a9784d"/>
+      <rect x="133" y="504" width="3" height="5" fill="#a9784d"/>
+      <circle cx="75" cy="498" r="3" fill="#ca848e"/>
+      <circle cx="68" cy="503" r="3" fill="#fff"/>
+      <circle cx="82" cy="495" r="2.5" fill="#f5c518"/>
+      <circle cx="63" cy="497" r="2" fill="#ca848e"/>
+      <rect x="74" y="498" width="2" height="6" fill="#a2a381"/>
+      <rect x="67" y="503" width="2" height="6" fill="#a2a381"/>
+      <rect x="81" y="495" width="2" height="6" fill="#a2a381"/>
+      <rect x="62" y="497" width="2" height="6" fill="#a2a381"/>
+      <rect x="0" y="430" width="900" height="28" fill="#c1a68b"/>
+      <rect x="0" y="436" width="900" height="2" fill="#a9784d" opacity="0.4"/>
+      <rect x="0" y="442" width="900" height="2" fill="#a9784d" opacity="0.4"/>
+      <rect x="0" y="448" width="900" height="2" fill="#a9784d" opacity="0.4"/>
+      <rect x="50" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="130" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="210" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="290" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="370" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="450" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="530" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="610" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="690" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="770" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="850" y="443" width="30" height="3" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="410" y="150" width="26" height="280" fill="#c1a68b"/>
+      <rect x="420" y="155" width="3" height="20" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="420" y="185" width="3" height="20" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="420" y="215" width="3" height="20" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="420" y="245" width="3" height="20" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="420" y="275" width="3" height="20" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="420" y="305" width="3" height="20" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="420" y="335" width="3" height="20" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="420" y="365" width="3" height="20" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="420" y="395" width="3" height="20" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="160" y="150" width="22" height="280" fill="#c1a68b"/>
+      <rect x="169" y="160" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="169" y="185" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="169" y="210" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="169" y="235" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="169" y="260" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="169" y="285" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="169" y="310" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="169" y="335" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="169" y="360" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="169" y="385" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="660" y="150" width="22" height="280" fill="#c1a68b"/>
+      <rect x="669" y="160" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="669" y="185" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="669" y="210" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="669" y="235" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="669" y="260" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="669" y="285" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="669" y="310" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="669" y="335" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="669" y="360" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="669" y="385" width="3" height="15" fill="#fff" opacity="0.5" rx="1"/>
+      <rect x="60" y="170" width="90" height="120" fill="#c1a68b" rx="2"/>
+      <rect x="60" y="170" width="90" height="8" fill="#a9784d"/>
+      <rect x="64" y="185" width="18" height="14" fill="#9cb8c6" rx="1"/>
+      <rect x="88" y="185" width="18" height="14" fill="#9cb8c6" rx="1"/>
+      <rect x="112" y="185" width="18" height="14" fill="#9cb8c6" rx="1"/>
+      <rect x="64" y="207" width="18" height="14" fill="#fff" rx="1"/>
+      <rect x="88" y="207" width="18" height="14" fill="#9cb8c6" rx="1"/>
+      <rect x="112" y="207" width="18" height="14" fill="#fff" rx="1"/>
+      <rect x="64" y="229" width="18" height="14" fill="#9cb8c6" rx="1"/>
+      <rect x="88" y="229" width="18" height="14" fill="#fff" rx="1"/>
+      <rect x="112" y="229" width="18" height="14" fill="#9cb8c6" rx="1"/>
+      <rect x="64" y="251" width="18" height="14" fill="#fff" rx="1"/>
+      <rect x="88" y="251" width="18" height="14" fill="#fff" rx="1"/>
+      <rect x="112" y="251" width="18" height="14" fill="#fff" rx="1"/>
+      <rect x="92" y="268" width="16" height="22" fill="#654320" rx="2"/>
+      <circle cx="105" cy="280" r="2" fill="#f5c518"/>
+      <rect x="55" y="165" width="100" height="6" fill="#a9784d" rx="1"/>
+      <rect x="60" y="158" width="90" height="8" fill="#c1a68b" rx="2"/>
+      <rect x="70" y="175" width="60" height="8" fill="#ca848e" rx="1"/>
+      <text x="100" y="181" text-anchor="middle" font-family="monospace" font-size="5" fill="white">BARYULAND APTS</text>
+      <rect x="64" y="199" width="18" height="4" fill="#ca848e" rx="1"/>
+      <circle cx="68" cy="198" r="2" fill="#fff"/>
+      <circle cx="74" cy="197" r="2" fill="#ca848e"/>
+      <circle cx="79" cy="198" r="2" fill="#f5c518"/>
+      <rect x="112" y="199" width="18" height="4" fill="#ca848e" rx="1"/>
+      <circle cx="116" cy="198" r="2" fill="#fff"/>
+      <circle cx="122" cy="197" r="2" fill="#ca848e"/>
+      <circle cx="127" cy="198" r="2" fill="#f5c518"/>
+      <rect x="310" y="160" width="120" height="100" fill="#654320" rx="2"/>
+      <rect x="310" y="160" width="120" height="12" fill="#a9784d"/>
+      <rect x="314" y="173" width="112" height="22" fill="#ca848e" rx="1"/>
+      <rect x="317" y="176" width="106" height="16" fill="#000" rx="1"/>
+      <text x="370" y="187" text-anchor="middle" font-family="monospace" font-size="6" fill="#f5c518">★ NOW PLAYING ★</text>
+      <rect x="318" y="196" width="10" height="64" fill="#c1a68b" rx="2"/>
+      <rect x="422" y="196" width="10" height="64" fill="#c1a68b" rx="2"/>
+      <rect x="348" y="220" width="22" height="40" fill="#9cb8c6" rx="2"/>
+      <rect x="380" y="220" width="22" height="40" fill="#9cb8c6" rx="2"/>
+      <rect x="368" y="220" width="4" height="40" fill="#a9784d"/>
+      <circle cx="356" cy="242" r="2" fill="#f5c518"/>
+      <circle cx="394" cy="242" r="2" fill="#f5c518"/>
+      <rect x="315" y="161" width="120" height="10" fill="#654320"/>
+      <rect x="320" y="162" width="110" height="8" fill="#a9784d" rx="1"/>
+      <text x="375" y="168" text-anchor="middle" font-family="monospace" font-size="6" fill="white">✦ CINEMA ✦</text>
+      <text x="330" y="215" font-size="10" fill="#f5c518" font-family="monospace">★</text>
+      <text x="408" y="215" font-size="10" fill="#f5c518" font-family="monospace">★</text>
+      <rect x="352" y="198" width="12" height="16" fill="#f5c518" rx="2"/>
+      <rect x="352" y="198" width="12" height="5" fill="#ca848e"/>
+      <circle cx="354" cy="197" r="3" fill="#fff"/>
+      <circle cx="358" cy="195" r="3" fill="#fff"/>
+      <circle cx="362" cy="197" r="3" fill="#fff"/>
+      <rect x="560" y="160" width="100" height="100" fill="#9cb8c6" rx="2"/>
+      <rect x="560" y="160" width="100" height="12" fill="#ca848e"/>
+      <rect x="565" y="162" width="90" height="8" fill="#ca848e" rx="1"/>
+      <text x="610" y="168" text-anchor="middle" font-family="monospace" font-size="6" fill="white">✧ ARCADE ✧</text>
+      <rect x="568" y="178" width="26" height="34" fill="#654320" rx="2"/>
+      <rect x="570" y="180" width="22" height="20" fill="#000" rx="1"/>
+      <rect x="572" y="183" width="18" height="14" fill="#ca848e" rx="1"/>
+      <circle cx="581" cy="207" r="3" fill="#c1a68b"/>
+      <rect x="576" y="204" width="3" height="3" fill="#9cb8c6"/>
+      <rect x="580" y="204" width="3" height="3" fill="#9cb8c6"/>
+      <rect x="602" y="178" width="26" height="34" fill="#654320" rx="2"/>
+      <rect x="604" y="180" width="22" height="20" fill="#000" rx="1"/>
+      <rect x="606" y="183" width="18" height="14" fill="#a2a381" rx="1"/>
+      <circle cx="615" cy="207" r="3" fill="#c1a68b"/>
+      <rect x="610" y="204" width="3" height="3" fill="#ca848e"/>
+      <rect x="614" y="204" width="3" height="3" fill="#ca848e"/>
+      <rect x="636" y="178" width="20" height="34" fill="#654320" rx="2"/>
+      <rect x="638" y="180" width="16" height="20" fill="#000" rx="1"/>
+      <rect x="640" y="183" width="12" height="14" fill="#9cb8c6" rx="1"/>
+      <circle cx="648" cy="207" r="3" fill="#c1a68b"/>
+      <rect x="598" y="218" width="24" height="42" fill="#a9784d" rx="2"/>
+      <rect x="602" y="222" width="16" height="24" fill="#c1a68b" rx="1"/>
+      <circle cx="617" cy="235" r="2" fill="#654320"/>
+      <text x="565" y="175" font-size="8" fill="#f5c518" font-family="monospace">♦</text>
+      <text x="643" y="175" font-size="8" fill="#f5c518" font-family="monospace">♦</text>
+      <rect x="240" y="310" width="120" height="90" fill="#c1a68b" rx="2"/>
+      <polygon points="228,310 372,310 360,295 240,295" fill="#a9784d"/>
+      <rect x="250" y="310" width="10" height="90" fill="#e8ddd0" rx="2"/>
+      <rect x="275" y="310" width="10" height="90" fill="#e8ddd0" rx="2"/>
+      <rect x="315" y="310" width="10" height="90" fill="#e8ddd0" rx="2"/>
+      <rect x="340" y="310" width="10" height="90" fill="#e8ddd0" rx="2"/>
+      <rect x="286" y="355" width="28" height="45" fill="#654320" rx="2"/>
+      <rect x="290" y="359" width="9" height="22" fill="#9cb8c6" rx="1"/>
+      <rect x="301" y="359" width="9" height="22" fill="#9cb8c6" rx="1"/>
+      <circle cx="300" cy="382" r="2" fill="#f5c518"/>
+      <rect x="262" y="320" width="16" height="22" fill="#9cb8c6" rx="1"/>
+      <rect x="322" y="320" width="16" height="22" fill="#9cb8c6" rx="1"/>
+      <rect x="264" y="328" width="12" height="1.5" fill="#c1a68b" opacity="0.8"/>
+      <rect x="269" y="321" width="1.5" height="20" fill="#c1a68b" opacity="0.8"/>
+      <rect x="324" y="328" width="12" height="1.5" fill="#c1a68b" opacity="0.8"/>
+      <rect x="329" y="321" width="1.5" height="20" fill="#c1a68b" opacity="0.8"/>
+      <rect x="252" y="296" width="96" height="10" fill="#654320" rx="1"/>
+      <text x="300" y="303" text-anchor="middle" font-family="monospace" font-size="6" fill="#f5c518">📚 LIBRARY</text>
+      <text x="300" y="308" text-anchor="middle" font-family="monospace" font-size="7" fill="#c1a68b">✦ ✦ ✦</text>
+      <rect x="243" y="398" width="114" height="5" fill="#a9784d" rx="1"/>
+      <rect x="238" y="403" width="124" height="5" fill="#c1a68b" rx="1"/>
+      <rect x="198" y="350" width="6" height="20" fill="#a9784d"/>
+      <circle cx="201" cy="340" r="18" fill="#a2a381"/>
+      <circle cx="195" cy="335" r="12" fill="#b5b894"/>
+      <circle cx="208" cy="337" r="10" fill="#8a8d6a"/>
+      <rect x="225" y="360" width="5" height="16" fill="#a9784d"/>
+      <circle cx="227" cy="352" r="14" fill="#a2a381"/>
+      <circle cx="222" cy="348" r="9" fill="#b5b894"/>
+      <rect x="498" y="340" width="6" height="20" fill="#a9784d"/>
+      <circle cx="501" cy="330" r="17" fill="#a2a381"/>
+      <circle cx="495" cy="325" r="11" fill="#b5b894"/>
+      <circle cx="508" cy="327" r="9" fill="#8a8d6a"/>
+      <rect x="525" y="355" width="5" height="15" fill="#a9784d"/>
+      <circle cx="527" cy="346" r="13" fill="#a2a381"/>
+      <rect x="740" y="200" width="6" height="18" fill="#a9784d"/>
+      <circle cx="743" cy="190" r="16" fill="#a2a381"/>
+      <circle cx="737" cy="185" r="10" fill="#b5b894"/>
+      <rect x="770" y="280" width="5" height="15" fill="#a9784d"/>
+      <circle cx="772" cy="271" r="14" fill="#a2a381"/>
+      <rect x="50" y="380" width="6" height="16" fill="#a9784d"/>
+      <circle cx="53" cy="370" r="15" fill="#a2a381"/>
+      <circle cx="47" cy="365" r="9" fill="#b5b894"/>
+      <rect x="140" y="370" width="5" height="14" fill="#a9784d"/>
+      <circle cx="142" cy="361" r="13" fill="#a2a381"/>
+      <circle cx="210" cy="422" r="5" fill="#ca848e"/>
+      <circle cx="220" cy="418" r="4" fill="#fff"/>
+      <circle cx="205" cy="415" r="4" fill="#f5c518"/>
+      <circle cx="455" cy="420" r="5" fill="#ca848e"/>
+      <circle cx="465" cy="416" r="4" fill="#fff"/>
+      <circle cx="448" cy="418" r="4" fill="#ca848e"/>
+      <circle cx="700" cy="422" r="5" fill="#ca848e"/>
+      <circle cx="710" cy="418" r="4" fill="#fff"/>
+      <rect x="205" y="408" width="4" height="22" fill="#654320"/>
+      <rect x="203" y="406" width="8" height="5" fill="#a9784d" rx="1"/>
+      <circle cx="207" cy="405" r="4" fill="#f5c518" opacity="0.8"/>
+      <rect x="455" y="408" width="4" height="22" fill="#654320"/>
+      <rect x="453" y="406" width="8" height="5" fill="#a9784d" rx="1"/>
+      <circle cx="457" cy="405" r="4" fill="#f5c518" opacity="0.8"/>
+      <rect x="705" y="408" width="4" height="22" fill="#654320"/>
+      <rect x="703" y="406" width="8" height="5" fill="#a9784d" rx="1"/>
+      <circle cx="707" cy="405" r="4" fill="#f5c518" opacity="0.8"/>
+      <path d="M 290 140 Q 294 135 298 140" stroke="#654320" stroke-width="1.5" fill="none"/>
+      <circle cx="294" cy="137" r="2.5" fill="#ca848e"/>
+      <path d="M 550 120 Q 554 115 558 120" stroke="#654320" stroke-width="1.5" fill="none"/>
+      <circle cx="554" cy="117" r="2.5" fill="#a2a381"/>
+      <path d="M 400 100 Q 404 95 408 100" stroke="#654320" stroke-width="1.5" fill="none"/>
+      <circle cx="404" cy="97" r="2.5" fill="#c1a68b"/>
+      <circle cx="840" cy="70" r="28" fill="#f5c518" opacity="0.9"/>
+      <line x1="840" y1="32" x2="840" y2="24" stroke="#f5c518" stroke-width="3" stroke-linecap="round"/>
+      <line x1="840" y1="108" x2="840" y2="116" stroke="#f5c518" stroke-width="3" stroke-linecap="round"/>
+      <line x1="802" y1="70" x2="794" y2="70" stroke="#f5c518" stroke-width="3" stroke-linecap="round"/>
+      <line x1="878" y1="70" x2="886" y2="70" stroke="#f5c518" stroke-width="3" stroke-linecap="round"/>
+      <line x1="815" y1="43" x2="809" y2="37" stroke="#f5c518" stroke-width="3" stroke-linecap="round"/>
+      <line x1="865" y1="97" x2="871" y2="103" stroke="#f5c518" stroke-width="3" stroke-linecap="round"/>
+      <line x1="865" y1="43" x2="871" y2="37" stroke="#f5c518" stroke-width="3" stroke-linecap="round"/>
+      <line x1="815" y1="97" x2="809" y2="103" stroke="#f5c518" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="840" cy="70" r="22" fill="#fff" opacity="0.15"/>
+      <rect x="360" y="540" width="180" height="40" fill="#c1a68b" rx="3"/>
+      <rect x="364" y="544" width="172" height="32" fill="#fff" rx="2"/>
+      <text x="450" y="560" text-anchor="middle" font-family="monospace" font-size="8" fill="#654320" font-weight="bold">✦ BARYULAND MAP ✦</text>
+      <text x="450" y="572" text-anchor="middle" font-family="monospace" font-size="6" fill="#a9784d">explore every corner ♥</text>
+    </svg>
+
+    <!-- Location labels -->
+    <div class="location-label" style="left:11%; top:37%;"
+         onmouseenter="showTip(event,'Apartment','Your cozy home base! 🏠 Rest up between adventures.')"
+         onmouseleave="hideTip()">
+      <span class="loc-icon">🏠</span>
+      <span class="loc-name">APARTMENT</span>
+    </div>
+    <div class="location-label" style="left:41%; top:32%;"
+         onmouseenter="showTip(event,'Cinema','Movie magic awaits! 🍿 Pick a film and snuggle up.')"
+         onmouseleave="hideTip()">
+      <span class="loc-icon">🎬</span>
+      <span class="loc-name">CINEMA</span>
+    </div>
+    <div class="location-label" style="left:66%; top:30%;"
+         onmouseenter="showTip(event,'Arcade','Play all day! 🕹️ Earn tickets, win prizes!')"
+         onmouseleave="hideTip()">
+      <span class="loc-icon">🕹️</span>
+      <span class="loc-name">ARCADE</span>
+    </div>
+    <div class="location-label" style="left:11%; top:77%;"
+         onmouseenter="showTip(event,'Park','Fresh air and flowers~ 🌸 Feed the ducks!')"
+         onmouseleave="hideTip()">
+      <span class="loc-icon">🌳</span>
+      <span class="loc-name">PARK</span>
+    </div>
+    <div class="location-label" style="left:33%; top:62%;"
+         onmouseenter="showTip(event,'Library','Shh... 📚 A magical world in every book!')"
+         onmouseleave="hideTip()">
+      <span class="loc-icon">📚</span>
+      <span class="loc-name">LIBRARY</span>
+    </div>
+    <div class="location-label" style="left:88%; top:77%;"
+         onmouseenter="showTip(event,'Beach','Sun, waves & sand castles~ 🌊 So peaceful!')"
+         onmouseleave="hideTip()">
+      <span class="loc-icon">🏖️</span>
+      <span class="loc-name">BEACH</span>
+    </div>
+
+    <div id="location-tooltip">
+      <div id="tip-title" style="font-size:22px; font-weight:bold; color:#654320;"></div>
+      <div id="tip-body" style="font-size:15px; color:#a9784d; margin-top:4px;"></div>
+    </div>
+  </div>
+
+  <div id="game-hud">
+    <div class="hud-window">
+      <span class="hud-title">✦ BARYULAND ✦</span>
+      <span style="color:#ca848e;">♥ explore freely ♥</span>
+    </div>
+  </div>
+
+  <button id="back-to-menu" onclick="goBack()">← Back to Menu</button>
+</div>
+
 <script>
-// ══════════════════════════════════════════════════════════════
-//  STORYLINES — edit everything inside buildings = { ... }
-//
-//  Each building has:
-//    name       → displayed in top bar
-//    bgColor    → dark background colour while interior loads
-//    bgPattern  → CSS pattern (placeholder until you add real images)
-//    bgImage    → uncomment + point to your pixel art gif/image
-//    scenes     → array of dialogue scenes played in order
-//
-//  Each scene has:
-//    name       → speaker label (e.g. "narrator", "a note on the table")
-//    text       → the dialogue text (types out letter by letter)
-//    choices    → optional branching choices: [{ label, next }]
-//                 next = index of scene to jump to
-//    memory     → optional { emoji, title, body } — the "gift" unlocked here
-// ══════════════════════════════════════════════════════════════
+/* ── Clock ── */
+function updateClock() {
+  const now = new Date();
+  let h = now.getHours(), m = now.getMinutes();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  const ms = m < 10 ? '0'+m : m;
+  const el = document.getElementById('clock');
+  if (el) el.textContent = h+':'+ms+' '+ampm;
+}
+updateClock();
+setInterval(updateClock, 30000);
 
-const buildings = {
+/* ── Drag ── */
+let dragState = null;
+function startDrag(e, id) {
+  if (e.target.classList.contains('win95-btn-sm')) return;
+  const win = document.getElementById(id);
+  bringToFront(win);
+  const rect = win.getBoundingClientRect();
+  dragState = { id, offX: e.clientX - rect.left, offY: e.clientY - rect.top };
+  e.preventDefault();
+}
+document.addEventListener('mousemove', e => {
+  if (!dragState) return;
+  const win = document.getElementById(dragState.id);
+  win.style.left = (e.clientX - dragState.offX) + 'px';
+  win.style.top  = (e.clientY - dragState.offY) + 'px';
+  win.style.transform = 'none';
+});
+document.addEventListener('mouseup', () => { dragState = null; });
 
-  library: {
-    name: 'Library',
-    bgColor: '#2b1f12',
-    bgPattern: `repeating-linear-gradient(90deg,#3a2a18 0,#3a2a18 1px,transparent 1px,transparent 32px),
-                repeating-linear-gradient(180deg,#3a2a18 0,#3a2a18 1px,transparent 1px,transparent 32px)`,
-    // bgImage: "url('library-interior.gif')",
-    scenes: [
-      {
-        name: 'narrator',
-        text: 'You step inside the library. It smells like old books and warm tea. The afternoon light comes in sideways through tall windows.'
-      },
-      {
-        name: 'narrator',
-        text: 'The shelves go all the way up to the ceiling. There\'s a cozy armchair by the window with a small side table. Someone left a bookmark shaped like a pressed flower.'
-      },
-      {
-        name: 'a small note on the table',
-        text: '"I saved you this spot. It\'s the best one in the whole library — the sun hits it perfectly at 3pm. You\'re welcome. — me 💛"'
-      },
-      {
-        name: 'narrator',
-        text: 'You notice a book left open on the armchair. It has pencil annotations in the margins — tiny hearts, question marks, underlines.',
-        choices: [
-          { label: 'Read the annotations', next: 4 },
-          { label: 'Look out the window instead', next: 5 }
-        ]
-      },
-      {
-        name: 'the margins of the book',
-        text: '"this part got me — did it get you? — circled three times — I think about this a lot — ← this one\'s for you"',
-        memory: {
-          emoji: '📖',
-          title: 'a book we\'d read together',
-          body: 'One day we\'re going to sit in a library just like this one. You\'ll read your thing and I\'ll read mine, and it\'ll be the most peaceful afternoon ever. I can\'t wait for that day.'
-        }
-      },
-      {
-        name: 'narrator',
-        text: 'Outside: a quiet street. A cat on a wall. Two people walking slowly, nowhere to be. You think about how nice it is to have nowhere to be.',
-        memory: {
-          emoji: '🪟',
-          title: 'our slow days',
-          body: 'My favourite version of us is when we have nothing to do and nowhere to go. Just existing somewhere together. Those are my favourite days.'
-        }
-      }
-    ]
-  },
+function bringToFront(win) {
+  document.querySelectorAll('.win95-window').forEach(w => w.style.zIndex = 5);
+  win.style.zIndex = 20;
+}
 
-  park: {
-    name: 'Park',
-    bgColor: '#1e2e14',
-    bgPattern: `repeating-linear-gradient(90deg,#253818 0,#253818 1px,transparent 1px,transparent 24px),
-                repeating-linear-gradient(180deg,#253818 0,#253818 1px,transparent 1px,transparent 24px)`,
-    // bgImage: "url('park-interior.gif')",
-    scenes: [
-      {
-        name: 'narrator',
-        text: 'The park is golden right now. That specific afternoon light that makes everything look a little bit magic.'
-      },
-      {
-        name: 'narrator',
-        text: 'There\'s a big tree in the middle. Under it: a picnic blanket, a half-eaten bag of crisps, and two cups of something warm.'
-      },
-      {
-        name: 'a note on the blanket',
-        text: '"I got here early to get the good spot. Obviously. You\'re welcome. Come sit. 🌿"'
-      },
-      {
-        name: 'narrator',
-        text: 'You sit down. The grass is soft and the air smells like flowers. Somewhere nearby a bird is going absolutely feral about something.',
-        choices: [
-          { label: 'Lie back and watch the clouds', next: 4 },
-          { label: 'Eat the crisps immediately', next: 5 }
-        ]
-      },
-      {
-        name: 'narrator',
-        text: 'The clouds are doing that thing where they look like shapes. You see: a rabbit. A boot. Something that might be a dog or a sofa.',
-        memory: {
-          emoji: '☁️',
-          title: 'cloud watching date',
-          body: 'We should do this for real one day. Blanket, snacks, absolutely no plans. I\'ll point at clouds and make things up and you\'ll pretend I\'m wrong even when I\'m right.'
-        }
-      },
-      {
-        name: 'narrator',
-        text: 'The crisps are actually really good. You feel no guilt. This is what parks are for.',
-        memory: {
-          emoji: '🌿',
-          title: 'our picnic date',
-          body: 'I really want to go on a proper picnic with you. Somewhere pretty. With good snacks and good company. (That\'s you. You\'re the good company.)'
-        }
-      }
-    ]
-  },
-
-  cinema: {
-    name: 'Cinema Baryu',
-    bgColor: '#0d0d1a',
-    bgPattern: `radial-gradient(circle at 50% 30%,#1a0a2e 0%,#0d0d1a 60%)`,
-    // bgImage: "url('cinema-interior.gif')",
-    scenes: [
-      {
-        name: 'narrator',
-        text: 'The cinema smells like popcorn and something slightly sticky you\'re choosing not to think about. Warm dim lights everywhere.'
-      },
-      {
-        name: 'narrator',
-        text: 'Two seats in the middle have little paper signs on them: RESERVED. One has a small bag of your favourite snacks.'
-      },
-      {
-        name: 'the paper sign',
-        text: '"saved. don\'t even think about sitting here if you\'re not you. — the management (that\'s me) 🎬"'
-      },
-      {
-        name: 'narrator',
-        text: 'The trailers start. Someone\'s phone goes off in the back. Everyone mentally judges them. You and I share a look.',
-        choices: [
-          { label: 'Steal some of my popcorn', next: 4 },
-          { label: 'Watch the trailers properly', next: 5 }
-        ]
-      },
-      {
-        name: 'narrator',
-        text: 'I pretend to be annoyed. I\'m not annoyed. You can always have some of my popcorn. That\'s just the deal.',
-        memory: {
-          emoji: '🍿',
-          title: 'movie night',
-          body: 'Our next movie night: your pick, my snacks, one blanket that we will definitely fight over. I\'m already looking forward to it.'
-        }
-      },
-      {
-        name: 'narrator',
-        text: 'The trailer is for something that looks either incredible or terrible. We genuinely can\'t tell. We\'ll probably watch it anyway.',
-        memory: {
-          emoji: '🎞️',
-          title: 'our watchlist',
-          body: 'We have so many things to watch together and not enough evenings. Let\'s fix that. I want to watch all of them with you.'
-        }
-      }
-    ]
-  },
-
-  arcade: {
-    name: 'Baryu Arcade',
-    bgColor: '#1a0a2a',
-    bgPattern: `repeating-linear-gradient(90deg,#2a0f3a 0,#2a0f3a 1px,transparent 1px,transparent 16px),
-                repeating-linear-gradient(180deg,#2a0f3a 0,#2a0f3a 1px,transparent 1px,transparent 16px)`,
-    // bgImage: "url('arcade-interior.gif')",
-    scenes: [
-      {
-        name: 'narrator',
-        text: 'The arcade is loud and bright and slightly overwhelming. Neon lights everywhere. The sound of seventeen games playing at once.'
-      },
-      {
-        name: 'narrator',
-        text: 'You find a two-player cabinet in the corner. Player 1 is already taken — there\'s a handwritten note taped to the joystick.'
-      },
-      {
-        name: 'the note',
-        text: '"player 2 always wins. that\'s just facts. prove me wrong. 🕹️"'
-      },
-      {
-        name: 'narrator',
-        text: 'The game loads. It\'s something retro with chunky pixels and a chiptune soundtrack that somehow slaps.',
-        choices: [
-          { label: 'Challenge accepted. Let\'s go.', next: 4 },
-          { label: 'Suggest the claw machine instead', next: 5 }
-        ]
-      },
-      {
-        name: 'narrator',
-        text: 'You play three rounds. The scores are disputed. Someone (me) claims a technical foul. The investigation is ongoing.',
-        memory: {
-          emoji: '🏆',
-          title: 'unresolved rivalry',
-          body: 'We\'re going to play so many games together and I\'m going to win some of them and be very gracious about it. You\'re welcome in advance.'
-        }
-      },
-      {
-        name: 'narrator',
-        text: 'The claw machine has a small stuffed bear that\'s been there for months. Neither of us wins it. It\'s still very fun.',
-        memory: {
-          emoji: '🧸',
-          title: 'arcade date',
-          body: 'I want to take you to an actual arcade. We\'re going to spend too many tokens, win something small and weird, and I\'m going to keep it forever.'
-        }
-      }
-    ]
-  },
-
-  apartment: {
-    name: 'Our Apartment',
-    bgColor: '#1a1408',
-    bgPattern: `repeating-linear-gradient(90deg,#251e0f 0,#251e0f 1px,transparent 1px,transparent 40px),
-                repeating-linear-gradient(180deg,#251e0f 0,#251e0f 1px,transparent 1px,transparent 40px)`,
-    // bgImage: "url('apartment-interior.gif')",
-    scenes: [
-      {
-        name: 'narrator',
-        text: 'Home. It smells familiar. There\'s soft music playing from somewhere — so quiet you\'re not sure if you\'re imagining it.'
-      },
-      {
-        name: 'narrator',
-        text: 'The fairy lights are on even though it\'s afternoon. Blankets on the couch. Someone made tea and left it on the table.'
-      },
-      {
-        name: 'a sticky note on the kettle',
-        text: '"made you tea. it\'s probably slightly cold now. sorry about that. love you though. — me 🕯️"'
-      },
-      {
-        name: 'narrator',
-        text: 'You sit on the couch. The good couch. Broken in just right. You feel your whole body relax.',
-        choices: [
-          { label: 'Read the letter on the coffee table', next: 4 },
-          { label: 'Just sit here for a moment', next: 5 }
-        ]
-      },
-      {
-        name: 'the letter',
-        text: '"I don\'t say this enough: thank you. For everything. For being here. For choosing us — every single day. You\'re my favourite person. Always. 💛"',
-        memory: {
-          emoji: '💛',
-          title: 'home is you',
-          body: 'Wherever we are — that\'s home to me. As long as you\'re there. I mean that completely.'
-        }
-      },
-      {
-        name: 'narrator',
-        text: 'You just sit. The music plays. The tea goes cold. It\'s somehow one of the nicest moments you\'ve had in a while.',
-        memory: {
-          emoji: '🕯️',
-          title: 'doing nothing, together',
-          body: 'Some of my favourite memories with you aren\'t even events. They\'re just moments. Being in the same room. Existing near each other. I love those ones most.'
-        }
-      }
-    ]
-  },
-
-  beach: {
-    name: 'Baryu Beach',
-    bgColor: '#0a1a2a',
-    bgPattern: `repeating-linear-gradient(180deg,#0d2030 0,#0d2030 1px,transparent 1px,transparent 20px)`,
-    // bgImage: "url('beach-interior.gif')",
-    scenes: [
-      {
-        name: 'narrator',
-        text: 'The beach is quiet today. Just the sound of waves and wind and a seagull somewhere being dramatic about something.'
-      },
-      {
-        name: 'narrator',
-        text: 'The sand is warm. The water is that specific colour of blue that only exists at the sea. There\'s a towel laid out with a little sunhat on it.'
-      },
-      {
-        name: 'a bottle, half-buried in the sand',
-        text: '"I left this here for you specifically. Dig it up. Open it. Read it. — someone who really likes you 🌊"'
-      },
-      {
-        name: 'narrator',
-        text: 'You sit at the water\'s edge. The waves come right up to your feet. You\'re not sure if it\'s cold. It doesn\'t matter.',
-        choices: [
-          { label: 'Open the bottle now', next: 4 },
-          { label: 'Watch the waves for a bit first', next: 5 }
-        ]
-      },
-      {
-        name: 'the message in the bottle',
-        text: '"Dear you — if you\'re reading this, you found it. Good. I put thought into burying it at exactly the right spot. The message is: I\'m really glad you exist. That\'s it. 💛"',
-        memory: {
-          emoji: '🐚',
-          title: 'message in a bottle',
-          body: 'One day I want to write you a real letter and put it somewhere for you to find. A proper one, with your name on it. Consider this the preview.'
-        }
-      },
-      {
-        name: 'narrator',
-        text: 'The waves are rhythmic and patient. They\'ve been doing this for millions of years. They don\'t mind waiting. Neither do you.',
-        memory: {
-          emoji: '🌅',
-          title: 'beach day, us',
-          body: 'I want to watch a sunset with you at the sea. A proper one. Where the sky goes all pink and orange and everything feels a little cinematic. We should go.'
-        }
-      }
-    ]
-  }
-
+/* ── Minimize / Maximize / Close / Restore ── */
+const windowMeta = {
+  'main-window':  { label: '🏠 Welcome to Baryuland!', minimized: false, maximized: false, savedPos: null },
+  'radio-window': { label: '🎵 Baryuland Radio',        minimized: false, maximized: false, savedPos: null },
 };
 
-// ══════════════════════════════════════════════════════════════
-//  ENGINE — no need to edit below here
-// ══════════════════════════════════════════════════════════════
-let currentBuilding = null;
-let currentScene = 0;
-let typing = false;
-let typeInterval = null;
-let fullText = '';
-let pendingMemory = null;
-
-function goToMap() {
-  ['titleScreen','interiorScreen'].forEach(id => document.getElementById(id).classList.remove('active'));
-  document.getElementById('mapScreen').classList.add('active');
-  currentBuilding = null;
+function minimizeWindow(id) {
+  const win = document.getElementById(id);
+  const meta = windowMeta[id];
+  meta.minimized = true;
+  win.style.display = 'none';
+  updateTaskbar();
 }
 
-function enterBuilding(id) {
-  currentBuilding = id;
-  currentScene = 0;
-  const b = buildings[id];
-  const bg = document.getElementById('interiorBg');
-  bg.style.background = b.bgColor;
-  document.getElementById('interiorPattern').style.background = b.bgPattern;
-  if (b.bgImage) {
-    bg.style.backgroundImage = b.bgImage;
-    bg.style.backgroundSize = 'cover';
-    bg.style.backgroundPosition = 'center';
+function maximizeWindow(id) {
+  const win = document.getElementById(id);
+  const meta = windowMeta[id];
+  if (meta.maximized) {
+    // restore
+    const s = meta.savedPos;
+    win.style.left   = s.left;
+    win.style.top    = s.top;
+    win.style.width  = s.width;
+    win.style.transform = s.transform;
+    meta.maximized = false;
   } else {
-    bg.style.backgroundImage = '';
+    meta.savedPos = { left: win.style.left, top: win.style.top, width: win.style.width, transform: win.style.transform };
+    win.style.left = '0px';
+    win.style.top  = '0px';
+    win.style.width = '100%';
+    win.style.transform = 'none';
+    meta.maximized = true;
+    bringToFront(win);
   }
-  document.getElementById('interiorName').textContent = '✿ ' + b.name;
-  document.getElementById('mapScreen').classList.remove('active');
-  document.getElementById('interiorScreen').classList.add('active');
-  showScene(0);
 }
 
-function showScene(index) {
-  const b = buildings[currentBuilding];
-  if (index >= b.scenes.length) { goToMap(); return; }
-  currentScene = index;
-  const scene = b.scenes[index];
-  document.getElementById('dlgName').textContent = scene.name;
-  document.getElementById('dlgChoices').style.display = 'none';
-  document.getElementById('dlgChoices').innerHTML = '';
-  document.getElementById('dlgNext').style.display = 'none';
-  pendingMemory = scene.memory || null;
-  typeText(scene.text, () => {
-    if (scene.choices) showChoices(scene.choices);
-    else document.getElementById('dlgNext').style.display = 'block';
+function closeWindow(id) {
+  const win = document.getElementById(id);
+  const meta = windowMeta[id];
+  meta.minimized = true;
+  win.style.display = 'none';
+  updateTaskbar();
+}
+
+function restoreWindow(id) {
+  const win = document.getElementById(id);
+  const meta = windowMeta[id];
+  meta.minimized = false;
+  win.style.display = '';
+  bringToFront(win);
+  updateTaskbar();
+}
+
+function updateTaskbar() {
+  const bar = document.getElementById('taskbar-windows');
+  bar.innerHTML = '';
+  Object.entries(windowMeta).forEach(([id, meta]) => {
+    const btn = document.createElement('div');
+    btn.style.cssText = 'height:22px;background:#c0c0c0;padding:0 8px;font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none;';
+    btn.style.border = meta.minimized ? '2px inset #c0c0c0' : '2px solid';
+    if (!meta.minimized) btn.style.borderColor = '#ffffff #808080 #808080 #ffffff';
+    btn.textContent = meta.label;
+    btn.onclick = () => meta.minimized ? restoreWindow(id) : minimizeWindow(id);
+    bar.appendChild(btn);
   });
 }
 
-function typeText(text, onDone) {
-  if (typeInterval) clearInterval(typeInterval);
-  fullText = text;
-  typing = true;
-  const el = document.getElementById('dlgText');
-  el.textContent = '';
-  let i = 0;
-  typeInterval = setInterval(() => {
-    el.textContent += text[i]; i++;
-    if (i >= text.length) {
-      clearInterval(typeInterval); typing = false;
-      if (onDone) onDone();
+function startGame() {
+  const overlay = document.getElementById('transition-overlay');
+  const bar = document.getElementById('loading-bar');
+  const msg = document.getElementById('loading-msg');
+  overlay.classList.add('show');
+  const messages = ['Loading Baryuland...','Planting trees...','Opening shops...','Almost there...','Welcome! ♥'];
+  let pct = 0, mi = 0;
+  const interval = setInterval(() => {
+    pct += Math.random() * 18 + 8;
+    if (pct > 100) pct = 100;
+    bar.style.width = pct + '%';
+    mi = Math.min(Math.floor(pct / 25), messages.length - 1);
+    msg.textContent = messages[mi];
+    if (pct >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.getElementById('win95-screen').style.display = 'none';
+        document.getElementById('game-screen').classList.add('active');
+        overlay.classList.remove('show');
+        bar.style.width = '0%';
+      }, 400);
     }
-  }, 20);
+  }, 120);
 }
 
-function advanceDialogue() {
-  if (typing) {
-    clearInterval(typeInterval); typing = false;
-    document.getElementById('dlgText').textContent = fullText;
-    const scene = buildings[currentBuilding].scenes[currentScene];
-    if (scene.choices) showChoices(scene.choices);
-    else document.getElementById('dlgNext').style.display = 'block';
-    return;
-  }
-  const scene = buildings[currentBuilding].scenes[currentScene];
-  if (scene.choices) return;
-  if (pendingMemory) { showMemory(pendingMemory); pendingMemory = null; return; }
-  showScene(currentScene + 1);
+function goBack() {
+  const overlay = document.getElementById('transition-overlay');
+  const bar = document.getElementById('loading-bar');
+  const msg = document.getElementById('loading-msg');
+  overlay.classList.add('show');
+  msg.textContent = 'Returning to desktop...';
+  let pct = 0;
+  const interval = setInterval(() => {
+    pct += 20;
+    bar.style.width = pct + '%';
+    if (pct >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.getElementById('game-screen').classList.remove('active');
+        document.getElementById('win95-screen').style.display = '';
+        overlay.classList.remove('show');
+        bar.style.width = '0%';
+      }, 300);
+    }
+  }, 80);
 }
 
-function showChoices(choices) {
-  const el = document.getElementById('dlgChoices');
-  el.style.display = 'flex'; el.innerHTML = '';
-  choices.forEach(c => {
-    const btn = document.createElement('button');
-    btn.className = 'choice-btn';
-    btn.textContent = c.label;
-    btn.onclick = e => { e.stopPropagation(); showScene(c.next); };
-    el.appendChild(btn);
-  });
+function showTip(e, title, body) {
+  const tip = document.getElementById('location-tooltip');
+  document.getElementById('tip-title').textContent = title;
+  document.getElementById('tip-body').textContent = body;
+  tip.style.display = 'block';
+  const rect = e.currentTarget.getBoundingClientRect();
+  const mapRect = document.getElementById('game-screen').getBoundingClientRect();
+  let x = rect.left - mapRect.left + rect.width/2 - 80;
+  let y = rect.top - mapRect.top - 90;
+  if (y < 10) y = rect.bottom - mapRect.top + 10;
+  tip.style.left = x + 'px';
+  tip.style.top = y + 'px';
+}
+function hideTip() {
+  document.getElementById('location-tooltip').style.display = 'none';
 }
 
-function showMemory(mem) {
-  document.getElementById('memEmoji').textContent = mem.emoji;
-  document.getElementById('memTitle').textContent = mem.title;
-  document.getElementById('memBody').textContent = mem.body;
-  document.getElementById('memoryPopup').classList.add('open');
-}
-
-function closeMemory() {
-  document.getElementById('memoryPopup').classList.remove('open');
-  showScene(currentScene + 1);
-}
-
-document.addEventListener('keydown', e => {
-  if (e.key === ' ' || e.key === 'Enter') {
-    if (document.getElementById('interiorScreen').classList.contains('active')) advanceDialogue();
-  }
-  if (e.key === 'Escape') {
-    if (document.getElementById('memoryPopup').classList.contains('open')) closeMemory();
-    else if (document.getElementById('interiorScreen').classList.contains('active')) goToMap();
-  }
-});
+/* init taskbar */
+updateTaskbar();
 </script>
 </body>
 </html>
